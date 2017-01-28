@@ -1,4 +1,4 @@
-###About Code Style
+#About Code Style
  - We will use tabs instead of spaces. Easier for debugging.
  - Try to keep code as clean as possible. If you need comments to understand the code it is not clear enough.
  - Variables will be named with camelCase not under_scores.
