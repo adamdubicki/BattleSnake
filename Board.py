@@ -56,7 +56,7 @@ class Board():
 			return 0
 		return abs(tile1[X] - tile2[X]) + abs(tile1[Y] - tile2[Y])
 
-	def aStarSearch(self,start,goal):
+	def aStarSearch(self, start, goal, shortestPath):
 		if(self.isTileOutOfBounds(start) or self.isTileOutOfBounds(goal)):
 			print("Failed to search because start or goal was out of bounds")
 			return None
@@ -77,31 +77,61 @@ class Board():
 
 		#At initialization add the starting location to the open list and empty the closed list
 		openList[startingTile.getPositionTuple()] = startingTile
-		foundGoal = False
+		if(shortestPath):
+			self.exploreTilesForShortestPath(openList, closedList, goal)
+		else:
+			self.exploreTilesForLongestPath(openList, closedList, goal)
 
-		while(bool(openList) and not foundGoal):
+		path = self.reconstructPath(start, goal, closedList)
+		return path
+
+	def exploreTilesForShortestPath(self, openList,closedList,goal):
+		normalizedDistanceValue = self.width * self.height
+		foundGoal = False
+		while (bool(openList) and not foundGoal):
 			openList = self.sortTiles(openList)
 			currentTile = openList.popitem(last=False)[1]
 			neighbors = self.getValidTileNeighbors(currentTile.getPositionTuple())
 			for neighbor in neighbors:
 				neighborTile = self.getTile(neighbor)
-				if((neighborTile.getPositionTuple()) == (self.getTile(goal).getPositionTuple())):
+				if ((neighborTile.getPositionTuple()) == (self.getTile(goal).getPositionTuple())):
 					foundGoal = True
 					self.getTile(goal).parent = currentTile
 					closedList.append(self.getTile(goal))
 					break
-				newCost = currentTile.fCost + normalizedDistanceValue + self.getDangerHeurestic(neighborTile.getPositionTuple())
-				if(not(neighborTile in closedList) and newCost <= neighborTile.fCost):
+				newCost = currentTile.fCost + normalizedDistanceValue + self.getDangerHeurestic(
+					neighborTile.getPositionTuple())
+				if (not (neighborTile in closedList) and newCost <= neighborTile.fCost):
 					neighborTile.fCost = newCost
 					openList[neighborTile.getPositionTuple()] = neighborTile
 					neighborTile.parent = currentTile
 			closedList.append(currentTile)
-		if(not foundGoal):
+		if (not foundGoal):
 			print("Goal was not reachable.")
 			return None
 
-		path = self.reconstructPath(start, goal, closedList)
-		return path
+	def exploreTilesForLongestPath(self, openList, closedList, goal):
+		normalizedDistanceValue = self.width * self.height
+		foundGoal = False
+		for i in range(self.width):
+			for j in range(self.height):
+				tile = self.getTile((i,j))
+				tile.fCost = 0
+				openList[tile.getPositionTuple()] = tile.getPositionTuple()
+		while (bool(openList)):
+			openList = self.sortTiles(openList)
+			currentTile = openList.popitem()[1]
+			neighbors = self.getValidTileNeighbors(currentTile.getPositionTuple())
+			for neighbor in neighbors:
+				neighborTile = self.getTile(neighbor)
+				newCost = currentTile.fCost + normalizedDistanceValue + self.getDangerHeurestic(neighborTile.getPositionTuple())
+				if (not (neighborTile in closedList) and newCost >= neighborTile.fCost):
+					neighborTile.fCost = newCost
+					neighborTile.parent = currentTile
+			closedList.append(currentTile)
+		if (not foundGoal):
+			print("Goal was not reachable.")
+			return None
 
 	def reconstructPath(self, start, goal, closedList):
 		pathFinished = False
@@ -109,7 +139,6 @@ class Board():
 		for tile in closedList:
 			if(tile.getPositionTuple() == goal):
 				currentTile = tile
-
 		path = [currentTile.getPositionTuple()]
 		while(not pathFinished):
 			if(currentTile.getPositionTuple() == start):
