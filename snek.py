@@ -13,7 +13,7 @@ def main():
 	board.insertBoardEntity((2,2), GameBoardEntityEnum.Food)
 	path = board.aStarSearch((2,0),(2,2))
 	print(board.toString())
-	# print(board.toCostString())
+	print(board.toCostString())
 	print(board.showPathString(path))
 
 	# #TEST 2
