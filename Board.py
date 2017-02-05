@@ -86,7 +86,6 @@ class Board():
 		return path
 
 	def exploreTilesForShortestPath(self, openList,closedList,goal):
-		normalizedDistanceValue = self.width * self.height
 		foundGoal = False
 		while (bool(openList) and not foundGoal):
 			openList = self.sortTiles(openList)
@@ -99,8 +98,7 @@ class Board():
 					self.getTile(goal).parent = currentTile
 					closedList.append(self.getTile(goal))
 					break
-				newCost = currentTile.fCost + normalizedDistanceValue + self.getDangerHeurestic(
-					neighborTile.getPositionTuple())
+				newCost = currentTile.fCost + self.getDistanceBetweenSpaces(neighborTile.getPositionTuple(),self.getTile(goal).getPositionTuple())+ self.getDangerHeurestic(neighborTile.getPositionTuple())
 				if (not (neighborTile in closedList) and newCost <= neighborTile.fCost):
 					neighborTile.fCost = newCost
 					openList[neighborTile.getPositionTuple()] = neighborTile
