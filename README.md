@@ -7,7 +7,7 @@
  ## Why does naming variables matter?
  The following is an example from the book Clean Code.
  ```
- public List<int[]> getThem() {<br>
+ public List<int[]> getThem() {
  List<int[]> list1 = new ArrayList<int[]>();
  for (int[] x : theList)
       if (x[0] == 4)
@@ -19,7 +19,7 @@
  
  From this code, nothing can really be understood about the application and function of this code.
  ```
- public List<int[]> getFlaggedCells() {<br>
+ public List<int[]> getFlaggedCells() {
     List<int[]> flaggedCells = new ArrayList<int[]>();
       for (int[] cell : gameBoard)
       if (cell[STATUS_VALUE] == FLAGGED)
