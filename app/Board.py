@@ -1,4 +1,5 @@
 import collections
+
 from GameBoardEntityEnum import GameBoardEntityEnum
 from Tile import Tile
 
@@ -56,7 +57,7 @@ class Board():
 			return 0
 		return abs(tile1[X] - tile2[X]) + abs(tile1[Y] - tile2[Y])
 
-	def aStarSearch(self, start, goal, shortestPath):
+	def aStarSearch(self, start, goal):
 		if(self.isTileOutOfBounds(start) or self.isTileOutOfBounds(goal)):
 			print("Failed to search because start or goal was out of bounds")
 			return None
@@ -77,10 +78,7 @@ class Board():
 
 		#At initialization add the starting location to the open list and empty the closed list
 		openList[startingTile.getPositionTuple()] = startingTile
-		if(shortestPath):
-			self.exploreTilesForShortestPath(openList, closedList, goal)
-		else:
-			self.exploreTilesForLongestPath(openList, closedList, goal)
+		self.exploreTilesForShortestPath(openList, closedList, goal)
 
 		path = self.reconstructPath(start, goal, closedList)
 		return path
