@@ -7,6 +7,17 @@ import random
 def static(path):
     return bottle.static_file(path, root='static/')
 
+@bottle.get('/')
+def index():
+    head_url = '%s://%s/static/head.jpg' % (
+        bottle.request.urlparts.scheme,
+        bottle.request.urlparts.netloc
+    )
+
+    return {
+        'color': '#00ff00',
+        'head': head_url
+    }
 
 @bottle.post('/start')
 def start():
