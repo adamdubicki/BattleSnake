@@ -9,7 +9,7 @@ def static(path):
 
 @bottle.get('/')
 def index():
-    head_url = '%s://%s/static/head.jpg' % (
+    head_url = '%s://%s/static/head.png' % (
         bottle.request.urlparts.scheme,
         bottle.request.urlparts.netloc
     )
