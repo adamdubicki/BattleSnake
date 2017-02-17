@@ -2,11 +2,13 @@ import bottle
 import os
 import random
 from Board import Board
+from GameBoardEntityEnum import GameBoardEntityEnum
 
 
 @bottle.route('/static/<path:path>')
 def static(path):
 	return bottle.static_file(path, root='static/')
+
 
 @bottle.get('/')
 def index():
@@ -19,6 +21,7 @@ def index():
 		'color': '#00ff00',
 		'head': head_url
 	}
+
 
 @bottle.post('/start')
 def start():
@@ -45,18 +48,24 @@ def start():
 @bottle.post('/move')
 def move():
 	data = bottle.request.json
-	board = Board(data['width'],data['height'])
-	print(board.toString())
-	print()
+	board = Board(data['width'], data['height'], data)
+	goal = board.pickGoal()
+	if(board.isTileOutOfBounds(goal)):
+		move = "DO SOMETHING FOR NO GOOD GOAL"
+	else:
+		path = board.aStarSearch(board.ourSnakeHead, goal)
+		if path != len(path) > 0:
+			print("Found Path to goal:" + str(path))
+			move = board.getDirectionFromMove(path[1])
+			print("Moving "+move)
+		else:
+			move = "DO SOMETHING FOR NO PATH"
 
-	# TODO: Do things with data
 	directions = ['up', 'down', 'left', 'right']
 
 	return {
-		'move': random.choice(directions),
-		'taunt': 'battlesnake-python!',
-		'data': data,
-		'board': board.toString()
+		'move': move,
+		'taunt': 'battlesnake-python!'
 	}
 
 
