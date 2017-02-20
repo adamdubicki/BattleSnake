@@ -18,6 +18,8 @@ class Board():
 		self.foods = []
 		self.snakeHeads = []
 		self.ourSnakeId = data['you']
+		self.ourSnakeBody = []
+		self.ourSnakeHead = []
 
 		# Add food
 		for food in data['food']:
@@ -30,10 +32,14 @@ class Board():
 				self.ourSnakeLength = len(snake['coords'])
 				self.ourSnakeHead = tuple((snake['coords'][0]))
 				self.snakeHeads.append(self.ourSnakeHead)
-				self.ourTail = (snake['coords'][-1])
+				self.ourTail = tuple((snake['coords'][-1]))
+				self.ourSnakeBody.append(self.ourSnakeHead)
 				self.insertBoardEntity(self.ourSnakeHead, GameBoardEntityEnum.SnakeHead)
-				for segment in range(1, len(snake['coords'])):
+				for segment in range(1, len(snake['coords'])-1):
+					self.ourSnakeBody.append(tuple(snake['coords'][segment]))
 					self.insertBoardEntity(snake['coords'][segment], GameBoardEntityEnum.Obstacle)
+				self.ourSnakeBody.append(tuple(self.ourTail))
+				self.insertBoardEntity(self.ourTail, GameBoardEntityEnum.SnakeTail)
 
 		# Process Opponents snake
 		for snake in data['snakes']:
@@ -54,11 +60,15 @@ class Board():
 			for snakeHead in self.snakeHeads:
 				distance = self.getDistanceBetweenSpaces(food, snakeHead)
 				if distance < foodDistances[tuple(food)][0]:
-					foodDistances[tuple(food)] = (distance, (snakeHead[0], snakeHead[1]))
+					foodDistances[tuple(food)] = (distance, (snakeHead[X], snakeHead[Y]))
+		goalChoice = None
 		for food in foodDistances:
 			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0]:
-				goal = food
-		return goal
+				goalChoice = food
+		if(goalChoice!=None):
+			return goalChoice
+		else:
+			return goal[1]
 
 	def getDirectionFromMove(self, move):
 		vertical = move[1] - self.ourSnakeHead[1]
@@ -131,10 +141,19 @@ class Board():
 
 		# At initialization add the starting location to the open list and empty the closed list
 		openList[startingTile.getPositionTuple()] = startingTile
-		self.exploreTilesForShortestPath(openList, closedList, goal)
+		foundGoal = self.exploreTilesForShortestPath(openList, closedList, goal)
+		if(foundGoal):
+			path = self.reconstructPath(start, goal, closedList)
+			return path
+		else:
+			return []
 
-		path = self.reconstructPath(start, goal, closedList)
-		return path
+	def findStallingMove(self,pathFromHeadToTail):
+		if (len(pathFromHeadToTail) > 0):
+			return self.getDirectionFromMove(pathFromHeadToTail[1])
+		else:
+			# FOCUS HERE, NEED SOMETHING REALLY GOOD HERE
+			pass
 
 	def exploreTilesForShortestPath(self, openList, closedList, goal):
 		foundGoal = False
@@ -149,10 +168,7 @@ class Board():
 					self.getTile(goal).parent = currentTile
 					closedList.append(self.getTile(goal))
 					break
-				newCost = currentTile.fCost + self.getDistanceBetweenSpaces(neighborTile.getPositionTuple(),
-																			self.getTile(
-																				goal).getPositionTuple()) + self.getDangerHeurestic(
-					neighborTile.getPositionTuple())
+				newCost = currentTile.fCost + self.getDistanceBetweenSpaces(neighborTile.getPositionTuple(), self.getTile(goal).getPositionTuple()) + self.getDangerHeurestic(neighborTile.getPositionTuple())
 				if (not (neighborTile in closedList) and newCost <= neighborTile.fCost):
 					neighborTile.fCost = newCost
 					openList[neighborTile.getPositionTuple()] = neighborTile
@@ -160,31 +176,21 @@ class Board():
 			closedList.append(currentTile)
 		if (not foundGoal):
 			print("Goal was not reachable.")
-			return None
+			return False
+		else:
+			return True
 
-	def exploreTilesForLongestPath(self, openList, closedList, goal):
-		normalizedDistanceValue = self.width * self.height
-		foundGoal = False
-		for i in range(self.width):
-			for j in range(self.height):
-				tile = self.getTile((i, j))
-				tile.fCost = 0
-				openList[tile.getPositionTuple()] = tile.getPositionTuple()
-		while (bool(openList)):
-			openList = self.sortTiles(openList)
-			currentTile = openList.popitem()[1]
-			neighbors = self.getValidTileNeighbors(currentTile.getPositionTuple())
-			for neighbor in neighbors:
-				neighborTile = self.getTile(neighbor)
-				newCost = currentTile.fCost + normalizedDistanceValue + self.getDangerHeurestic(
-					neighborTile.getPositionTuple())
-				if (not (neighborTile in closedList) and newCost >= neighborTile.fCost):
-					neighborTile.fCost = newCost
-					neighborTile.parent = currentTile
-			closedList.append(currentTile)
-		if (not foundGoal):
-			print("Goal was not reachable.")
-			return None
+	#Return the coordinates head to tail of our snake moved along the path
+	def projectSnakeBodyAlongPath(self, path):
+		pathCoords = list(path)
+		pathCoords.reverse()
+		if(len(path) > len(self.ourSnakeBody)):
+			return pathCoords[:len(self.ourSnakeBody)]
+		elif(len(self.ourSnakeBody) > len(path)):
+			return pathCoords[:-1] + self.ourSnakeBody[:-(len(path)-1)]
+		else:
+			return pathCoords
+
 
 	def reconstructPath(self, start, goal, closedList):
 		pathFinished = False

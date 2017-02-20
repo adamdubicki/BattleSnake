@@ -49,19 +49,29 @@ def start():
 def move():
 	data = bottle.request.json
 	board = Board(data['width'], data['height'], data)
-	goal = board.pickGoal()
-	if(board.isTileOutOfBounds(goal)):
-		move = "DO SOMETHING FOR NO GOOD GOAL"
-	else:
-		path = board.aStarSearch(board.ourSnakeHead, goal)
-		if path != len(path) > 0:
-			print("Found Path to goal:" + str(path))
-			move = board.getDirectionFromMove(path[1])
-			print("Moving "+move)
-		else:
-			move = "DO SOMETHING FOR NO PATH"
-
 	directions = ['up', 'down', 'left', 'right']
+	# To find snake S1's next moving direction D, the AI follows the steps below:
+	goal = board.pickGoal()
+	pathFromHeadToTail = board.aStarSearch(board.ourSnakeHead, board.ourTail)
+
+	#No good goal
+	if(board.isTileOutOfBounds(goal)):
+		move = board.findStallingMove(pathFromHeadToTail)
+	else:
+		# 1. Compute the shortestpath P1 from snake S1 's '
+		# head to the food. If P1 exists, go to step 2. Otherwise, go to step 4.
+		pathToGoal = board.aStarSearch(board.ourSnakeHead, goal)
+		if (len(pathToGoal) > 0):
+
+			# 2. Move a virtual snake S2(the same as S1) to eat the food along path P1.
+			virtualSnake = board.projectSnakeBodyAlongPath(pathToGoal)
+
+			# 3. Compute the path from S2's head to its tail, if it exists, let D be the direction of P1
+			#Otherwise go to step 4
+			#board.computePathForVirtualSnake()
+			move = board.getDirectionFromMove(pathToGoal[1])
+		else:
+			move = board.findStallingMove(pathFromHeadToTail)
 
 	return {
 		'move': move,

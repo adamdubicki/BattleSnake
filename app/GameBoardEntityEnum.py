@@ -4,3 +4,4 @@ class GameBoardEntityEnum(object):
 	SnakeHead = "H"
 	Obstacle = "O"
 	Collectable = "C"
+	SnakeTail = "T"
