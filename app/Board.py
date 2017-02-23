@@ -1,5 +1,5 @@
 import collections
-
+from DirectionEnum import DirectionEnum
 from GameBoardEntityEnum import GameBoardEntityEnum
 from Tile import Tile
 
@@ -26,20 +26,18 @@ class Board():
 			self.insertBoardEntity(food, GameBoardEntityEnum.Food)
 			self.foods.append(food)
 
-		# Process Our Snake
+		# Get our snake data, is used for processing of opponents snakes
 		for snake in data['snakes']:
 			if snake['id'] == self.ourSnakeId:
 				self.ourSnakeLength = len(snake['coords'])
 				self.ourSnakeHead = tuple((snake['coords'][0]))
 				self.snakeHeads.append(self.ourSnakeHead)
-				self.ourTail = tuple((snake['coords'][-1]))
+				self.ourSnakeTail = tuple((snake['coords'][-1]))
 				self.ourSnakeBody.append(self.ourSnakeHead)
 				self.insertBoardEntity(self.ourSnakeHead, GameBoardEntityEnum.SnakeHead)
-				for segment in range(1, len(snake['coords'])-1):
+				for segment in range(1, len(snake['coords']) - 1):
 					self.ourSnakeBody.append(tuple(snake['coords'][segment]))
-					self.insertBoardEntity(snake['coords'][segment], GameBoardEntityEnum.Obstacle)
-				self.ourSnakeBody.append(tuple(self.ourTail))
-				self.insertBoardEntity(self.ourTail, GameBoardEntityEnum.SnakeTail)
+				self.ourSnakeBody.append(tuple(self.ourSnakeTail))
 
 		# Process Opponents snake
 		for snake in data['snakes']:
@@ -51,6 +49,12 @@ class Board():
 				self.snakeHeads.append(tuple(snake['coords'][0]))
 				for segment in range(0, len(snake['coords'])):
 					self.insertBoardEntity(snake['coords'][segment], GameBoardEntityEnum.Obstacle)
+
+		# Add our snake body
+		for segment in self.ourSnakeBody:
+			self.insertBoardEntity(segment, GameBoardEntityEnum.Obstacle)
+		self.insertBoardEntity(self.ourSnakeHead, GameBoardEntityEnum.SnakeHead)
+		self.insertBoardEntity(self.ourSnakeTail, GameBoardEntityEnum.SnakeTail)
 
 	def pickGoal(self):
 		goal = (9999, (-1, -1))
@@ -65,25 +69,24 @@ class Board():
 		for food in foodDistances:
 			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0]:
 				goalChoice = food
-		if(goalChoice!=None):
+		if (goalChoice != None):
 			return goalChoice
 		else:
 			return goal[1]
 
-	def getDirectionFromMove(self, move):
-		vertical = move[1] - self.ourSnakeHead[1]
-		horizontal = move[0] - self.ourSnakeHead[0]
-		print(horizontal)
+	def getDirectionFromMove(self, start, move):
+		vertical = move[1] - start[1]
+		horizontal = move[0] - start[0]
 		if vertical == 0:
 			if horizontal > 0:
-				return 'right'
+				return DirectionEnum.Right
 			else:
-				return 'left'
+				return DirectionEnum.Left
 		else:
 			if vertical < 0:
-				return 'up'
+				return DirectionEnum.Up
 			else:
-				return 'down'
+				return DirectionEnum.Down
 
 	# Helper method
 	def isXOutOfBounds(self, xPosition):
@@ -120,13 +123,91 @@ class Board():
 			return 0
 		return abs(tile1[X] - tile2[X]) + abs(tile1[Y] - tile2[Y])
 
+	def extendPath(self, currentTile, nextTile, visited, newPath, index):
+		# print("before " + str(newPath))
+		# print(index)
+		visited.append(currentTile)
+		visited.append(nextTile)
+		# print("Current in visited? " + str(not (nextTile in visited)))
+		if (currentTile not in newPath and nextTile not in newPath):
+			newPath.insert(index + 1, currentTile)
+			newPath.insert(index + 2, nextTile)
+		# print("after " + str(newPath) + "\n")
+
+	def isExtensionValid(self, currentTile, nextTile, visited):
+		print(str(currentTile) + " "+ str(nextTile))
+		if (self.isTileOutOfBounds(currentTile) or self.isTileOutOfBounds(nextTile)):
+			# print("OOB")
+			return False
+		# Make sure the shift is unoccupied
+		elif (self.getTile(currentTile).entity == GameBoardEntityEnum.Obstacle):
+			# print("OBS")
+			return False
+		elif (self.getTile(nextTile).entity == GameBoardEntityEnum.Obstacle):
+			# print("OBS")
+			return False
+		# Make sure we don't shift the same tile pair twice
+		elif (currentTile in visited and nextTile in visited):
+			# print("Vis")
+			return False
+		else:
+			return True
+
+	# Longest path is NP Complete, this is a rough estimate
+	def longerPath(self, start, goal):
+		basePath = self.aStarSearch(start, goal)
+		pathFinished = False
+		visited = list(basePath)
+		if (len(basePath) > 0):
+			while (not pathFinished):
+				changesMade = False
+				for i in range(len(basePath) - 1):
+					currentTile = basePath[i]
+					nextTile = basePath[i + 1]
+					direction = self.getDirectionFromMove(currentTile, nextTile)
+					if (direction == DirectionEnum.Left or direction == DirectionEnum.Right):
+						currentUp = (currentTile[X], currentTile[Y] - 1)
+						nextUp = (nextTile[X], nextTile[Y] - 1)
+						if (self.isExtensionValid(currentUp, nextUp, visited)):
+							# print("Extending down: " + str(currentUp) + " " + str(nextUp))
+							self.extendPath(currentUp, nextUp, visited, basePath, i)
+							changesMade = True
+						else:
+							currentDown = (currentTile[X], currentTile[Y] + 1)
+							nextDown = (nextTile[X], nextTile[Y] + 1)
+							if (self.isExtensionValid(currentDown, nextDown, visited)):
+								# print("Extending down: " + str(currentDown) + " " + str(nextDown))
+								self.extendPath(currentDown, nextDown, visited, basePath, i)
+								changesMade = True
+					else:
+						currentLeft = (currentTile[X] - 1, currentTile[Y])
+						nextLeft = (nextTile[X] - 1, nextTile[Y])
+						if (self.isExtensionValid(currentLeft, nextLeft, visited)):
+							# print("Extending Left: " + str(currentLeft) + " " + str(nextLeft))
+							self.extendPath(currentLeft, nextLeft, visited, basePath, i)
+							changesMade = True
+						else:
+							currentRight = (currentTile[X], currentTile[Y] + 1)
+							nextRight = (nextTile[X], nextTile[Y] + 1)
+							if (self.isExtensionValid(currentRight, nextRight, visited)):
+								# print("Extending right: " + str(currentRight) + " " + str(nextRight))
+								self.extendPath(currentRight, nextRight, visited, basePath, i)
+								changesMade = True
+				if (not changesMade):
+					pathFinished = True
+			for tile in basePath:
+				self.insertBoardEntity(tile, 'X')
+			return basePath
+		else:
+			return []
+
 	def aStarSearch(self, start, goal):
 		if (self.isTileOutOfBounds(start) or self.isTileOutOfBounds(goal)):
 			print("Failed to search because start or goal was out of bounds")
-			return None
+			return []
 		if (start == goal):
 			print("Failed to search because the snake is already at the goal")
-			return None
+			return []
 		# Initialize the heurestic values + distance values of the tiles
 		normalizedDistanceValue = self.width * self.height
 		# Tiles we need to vist
@@ -142,18 +223,11 @@ class Board():
 		# At initialization add the starting location to the open list and empty the closed list
 		openList[startingTile.getPositionTuple()] = startingTile
 		foundGoal = self.exploreTilesForShortestPath(openList, closedList, goal)
-		if(foundGoal):
+		if (foundGoal):
 			path = self.reconstructPath(start, goal, closedList)
 			return path
 		else:
 			return []
-
-	def findStallingMove(self,pathFromHeadToTail):
-		if (len(pathFromHeadToTail) > 0):
-			return self.getDirectionFromMove(pathFromHeadToTail[1])
-		else:
-			# FOCUS HERE, NEED SOMETHING REALLY GOOD HERE
-			pass
 
 	def exploreTilesForShortestPath(self, openList, closedList, goal):
 		foundGoal = False
@@ -168,7 +242,7 @@ class Board():
 					self.getTile(goal).parent = currentTile
 					closedList.append(self.getTile(goal))
 					break
-				newCost = currentTile.fCost + self.getDistanceBetweenSpaces(neighborTile.getPositionTuple(), self.getTile(goal).getPositionTuple()) + self.getDangerHeurestic(neighborTile.getPositionTuple())
+				newCost = currentTile.fCost + self.gCost(neighborTile, goal)
 				if (not (neighborTile in closedList) and newCost <= neighborTile.fCost):
 					neighborTile.fCost = newCost
 					openList[neighborTile.getPositionTuple()] = neighborTile
@@ -180,17 +254,40 @@ class Board():
 		else:
 			return True
 
-	#Return the coordinates head to tail of our snake moved along the path
+	def gCost(self, neighborTile, goal):
+		return self.getDistanceBetweenSpaces(neighborTile.getPositionTuple(), self.getTile(goal).getPositionTuple()) + \
+			   self.getDangerHeurestic(neighborTile.getPositionTuple())
+
+	# Return the coordinates head to tail of our snake moved along the path
 	def projectSnakeBodyAlongPath(self, path):
 		pathCoords = list(path)
 		pathCoords.reverse()
-		if(len(path) > len(self.ourSnakeBody)):
+		if (len(path) > len(self.ourSnakeBody)):
 			return pathCoords[:len(self.ourSnakeBody)]
-		elif(len(self.ourSnakeBody) > len(path)):
-			return pathCoords[:-1] + self.ourSnakeBody[:-(len(path)-1)]
+		elif (len(self.ourSnakeBody) > len(path)):
+			return pathCoords[:-1] + self.ourSnakeBody[:-(len(path) - 1)]
 		else:
 			return pathCoords
 
+	def isCyclical(self, virtualSnake):
+		originalSnake = self.ourSnakeBody
+		originalHead = self.ourSnakeHead
+		originalTail = self.ourSnakeTail
+		for snake in originalSnake:
+			self.insertBoardEntity(snake, GameBoardEntityEnum.Empty)
+		for projection in virtualSnake:
+			self.insertBoardEntity(projection, GameBoardEntityEnum.Obstacle)
+		cycle = self.longerPath(virtualSnake[0], virtualSnake[-1])
+		for projection in virtualSnake:
+			self.insertBoardEntity(projection, GameBoardEntityEnum.Empty)
+		for snake in originalSnake:
+			self.insertBoardEntity(snake, GameBoardEntityEnum.Obstacle)
+		self.insertBoardEntity(originalHead, GameBoardEntityEnum.SnakeHead)
+		self.insertBoardEntity(originalTail, GameBoardEntityEnum.SnakeTail)
+		if (len(cycle) > 0):
+			return True
+		else:
+			return False
 
 	def reconstructPath(self, start, goal, closedList):
 		pathFinished = False
