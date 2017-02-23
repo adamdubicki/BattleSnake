@@ -7,7 +7,6 @@ class Tile():
         self.yPosition = yPosition
         self.entity = GameBoardEntityEnum.Empty
         self.parent = None
-        self.fCost = 9999999 #Path cost g
 
     def getPositionTuple(self):
         return (self.xPosition,self.yPosition)

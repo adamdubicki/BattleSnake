@@ -2,6 +2,7 @@ import bottle
 import os
 from multiprocessing.pool import ThreadPool
 from Board import Board
+from GameBoardEntityEnum import GameBoardEntityEnum
 import time
 
 
@@ -53,7 +54,6 @@ def move():
 	board = Board(data['width'], data['height'], data)
 	directions = ['up', 'down', 'left', 'right']
 	# To find snake S1's next moving direction D, the AI follows the steps below:
-
 	goal = board.pickGoal()
 	pool = ThreadPool(processes=2)
 	pathToGoal = pool.apply_async(board.aStarSearch, (board.ourSnakeHead, goal))
@@ -64,6 +64,7 @@ def move():
 	# If path to the goal exists, go to step 2, Otherwise, go to step 4.
 	goodPath = True
 	if (len(pathToGoal) > 0):
+		print("Found path to goal: "+str(goal))
 		# 2. Move a virtual snake to eat the food along path P1.
 		virtualSnake = board.projectSnakeBodyAlongPath(pathToGoal)
 
@@ -74,10 +75,14 @@ def move():
 		# 3. Compute the longest path P2 from virtual snakes's head to its tail.
 		# If P2 exists, let D be the first direction in path P1. Otherwise, go to step 4
 		if (board.isCyclical(virtualSnake)):
-			move = board.getDirectionFromMove(pathToGoal[1], board.ourSnakeHead)
+			print("Path to goal is safe: Moving to goal")
+			print(pathToGoal)
+			move = board.getDirectionFromMove(board.ourSnakeHead,pathToGoal[1])
 		else:
+			print("Path to goal was not safe")
 			goodPath = False
 	else:
+		print("No path to goal")
 		goodPath = False
 
 	if (not goodPath):
@@ -85,12 +90,14 @@ def move():
 		# let D be the first direction in path P3. Otherwise, go to step 5.
 		pathToTail = pathToTail.get()
 		if (len(pathToTail) > 0):
+			print("Path to tail exists, will stall")
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToTail[1])
 		else:
+			print("No path to tail, need to find most open space")
 			# THIS IS WHERE WE NEED TO WORRY
 			pass
 
-	# print(board.toString())
+	print(board.toString())
 	print(time.time() - start)
 	return {
 		'move': move,

@@ -115,6 +115,7 @@ class Board():
 			return False
 		else:
 			self.gameBoard[tile[X]][tile[Y]].entity = entity
+			self.gameBoard[tile[X]][tile[Y]].fCost = 9999999
 			return True
 
 	# Get Manhatten distance between two tiles
@@ -135,7 +136,7 @@ class Board():
 		# print("after " + str(newPath) + "\n")
 
 	def isExtensionValid(self, currentTile, nextTile, visited):
-		print(str(currentTile) + " "+ str(nextTile))
+		# print(str(currentTile) + " "+ str(nextTile))
 		if (self.isTileOutOfBounds(currentTile) or self.isTileOutOfBounds(nextTile)):
 			# print("OOB")
 			return False
@@ -195,8 +196,8 @@ class Board():
 								changesMade = True
 				if (not changesMade):
 					pathFinished = True
-			for tile in basePath:
-				self.insertBoardEntity(tile, 'X')
+			# for tile in basePath:
+			# 	self.insertBoardEntity(tile, 'X')
 			return basePath
 		else:
 			return []
@@ -215,26 +216,32 @@ class Board():
 
 		# A list of tiles updated with the most current path
 		closedList = []
+		fCost = {}
 
 		startingTile = self.getTile(start)
 		startingTile.fCost = 0
+		for i in range(self.width):
+			for j in range(self.height):
+				fCost[(i, j)] = 9999999
+		fCost[startingTile.getPositionTuple()] = 0
 		startingTile.parent = startingTile
 
 		# At initialization add the starting location to the open list and empty the closed list
 		openList[startingTile.getPositionTuple()] = startingTile
-		foundGoal = self.exploreTilesForShortestPath(openList, closedList, goal)
+		foundGoal = self.exploreTilesForShortestPath(openList, closedList, goal, fCost)
 		if (foundGoal):
 			path = self.reconstructPath(start, goal, closedList)
 			return path
 		else:
 			return []
 
-	def exploreTilesForShortestPath(self, openList, closedList, goal):
+	def exploreTilesForShortestPath(self, openList, closedList, goal, fCost):
 		foundGoal = False
 		while (bool(openList) and not foundGoal):
-			openList = self.sortTiles(openList)
+			openList = self.sortTiles(openList,fCost)
 			currentTile = openList.popitem(last=False)[1]
 			neighbors = self.getValidTileNeighbors(currentTile.getPositionTuple())
+			# print(str(currentTile.getPositionTuple()) + " neighbors " + str(neighbors))
 			for neighbor in neighbors:
 				neighborTile = self.getTile(neighbor)
 				if ((neighborTile.getPositionTuple()) == (self.getTile(goal).getPositionTuple())):
@@ -242,9 +249,9 @@ class Board():
 					self.getTile(goal).parent = currentTile
 					closedList.append(self.getTile(goal))
 					break
-				newCost = currentTile.fCost + self.gCost(neighborTile, goal)
-				if (not (neighborTile in closedList) and newCost <= neighborTile.fCost):
-					neighborTile.fCost = newCost
+				newCost = fCost[currentTile.getPositionTuple()] + self.gCost(neighborTile, goal)
+				if (not (neighborTile in closedList) and newCost <= fCost[neighborTile.getPositionTuple()]):
+					fCost[neighborTile.getPositionTuple()] = newCost
 					openList[neighborTile.getPositionTuple()] = neighborTile
 					neighborTile.parent = currentTile
 			closedList.append(currentTile)
@@ -277,6 +284,8 @@ class Board():
 			self.insertBoardEntity(snake, GameBoardEntityEnum.Empty)
 		for projection in virtualSnake:
 			self.insertBoardEntity(projection, GameBoardEntityEnum.Obstacle)
+		self.insertBoardEntity(virtualSnake[-1], GameBoardEntityEnum.SnakeTail)
+		self.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.SnakeHead)
 		cycle = self.longerPath(virtualSnake[0], virtualSnake[-1])
 		for projection in virtualSnake:
 			self.insertBoardEntity(projection, GameBoardEntityEnum.Empty)
@@ -284,6 +293,7 @@ class Board():
 			self.insertBoardEntity(snake, GameBoardEntityEnum.Obstacle)
 		self.insertBoardEntity(originalHead, GameBoardEntityEnum.SnakeHead)
 		self.insertBoardEntity(originalTail, GameBoardEntityEnum.SnakeTail)
+		self.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.Food)
 		if (len(cycle) > 0):
 			return True
 		else:
@@ -306,8 +316,8 @@ class Board():
 		path.reverse()
 		return path
 
-	def sortTiles(self, openList):
-		orderedList = collections.OrderedDict(sorted(openList.items(), key=lambda tile: tile[1].fCost))
+	def sortTiles(self, openList, fCost):
+		orderedList = collections.OrderedDict(sorted(openList.items(), key=lambda tile: fCost[tile[1].getPositionTuple()]))
 		return orderedList
 
 	def getValidTileNeighbors(self, tile):
