@@ -196,12 +196,11 @@ class Board():
 								changesMade = True
 				if (not changesMade):
 					pathFinished = True
-			# for tile in basePath:
-			# 	self.insertBoardEntity(tile, 'X')
 			return basePath
 		else:
 			return []
 
+	# Path finding algorithm
 	def aStarSearch(self, start, goal):
 		if (self.isTileOutOfBounds(start) or self.isTileOutOfBounds(goal)):
 			print("Failed to search because start or goal was out of bounds")
@@ -235,10 +234,11 @@ class Board():
 		else:
 			return []
 
+	# Try and find the goal
 	def exploreTilesForShortestPath(self, openList, closedList, goal, fCost):
 		foundGoal = False
 		while (bool(openList) and not foundGoal):
-			openList = self.sortTiles(openList,fCost)
+			openList = self.sortTiles(openList, fCost)
 			currentTile = openList.popitem(last=False)[1]
 			neighbors = self.getValidTileNeighbors(currentTile.getPositionTuple())
 			# print(str(currentTile.getPositionTuple()) + " neighbors " + str(neighbors))
@@ -261,6 +261,7 @@ class Board():
 		else:
 			return True
 
+	# The heuristic cost of moving to a tile
 	def gCost(self, neighborTile, goal):
 		return self.getDistanceBetweenSpaces(neighborTile.getPositionTuple(), self.getTile(goal).getPositionTuple()) + \
 			   self.getDangerHeurestic(neighborTile.getPositionTuple())
@@ -276,6 +277,7 @@ class Board():
 		else:
 			return pathCoords
 
+	# Check to see if a path is cyclical
 	def isCyclical(self, virtualSnake):
 		originalSnake = self.ourSnakeBody
 		originalHead = self.ourSnakeHead
@@ -299,6 +301,7 @@ class Board():
 		else:
 			return False
 
+	#Given the list of what was visited, create list [h,p1,..,pn,g]
 	def reconstructPath(self, start, goal, closedList):
 		pathFinished = False
 		currentTile = 0
@@ -316,8 +319,10 @@ class Board():
 		path.reverse()
 		return path
 
+	#Sort the tiles by current shortest path for a*
 	def sortTiles(self, openList, fCost):
-		orderedList = collections.OrderedDict(sorted(openList.items(), key=lambda tile: fCost[tile[1].getPositionTuple()]))
+		orderedList = collections.OrderedDict(
+			sorted(openList.items(), key=lambda tile: fCost[tile[1].getPositionTuple()]))
 		return orderedList
 
 	def getValidTileNeighbors(self, tile):
@@ -344,6 +349,8 @@ class Board():
 			neighbors.remove(invalidNeighbor)
 		return neighbors
 
+	# Get a heuristic on how dangerous a tile is
+	# Dangerous tiles are close to walls
 	def getDangerHeurestic(self, tile):
 		validNeighbors = self.getValidTileNeighbors(tile)
 		return (4 - len(validNeighbors))
@@ -354,6 +361,7 @@ class Board():
 			return None
 		return self.gameBoard[tile[X]][tile[Y]]
 
+	# To string, pretty print
 	def toString(self):
 		rowDividerString = " --- " * self.width + "\n"
 		boardString = rowDividerString
@@ -364,7 +372,8 @@ class Board():
 			boardString += "\n" + rowDividerString
 		return boardString
 
-	def showPathString(self, path):
+	# Print the board, with the path injected
+	def toPathString(self, path):
 		rowDividerString = " --- " * self.width + "\n"
 		boardString = rowDividerString
 		for j in range(self.height):
@@ -374,18 +383,5 @@ class Board():
 					boardString += "| X |"
 				else:
 					boardString += "| " + self.gameBoard[i][j].entity + " |"
-			boardString += "\n" + rowDividerString
-		return boardString
-
-	def toCostString(self):
-		rowDividerString = " --- " * self.width + "\n"
-		boardString = rowDividerString
-		for j in range(self.height):
-			for i in range(self.width):
-				tile = self.gameBoard[i][j]
-				if (tile.entity == GameBoardEntityEnum.Obstacle):
-					boardString += "| ooo |"
-				else:
-					boardString += "| " + str(self.gameBoard[i][j].fCost) + " |"
 			boardString += "\n" + rowDividerString
 		return boardString
