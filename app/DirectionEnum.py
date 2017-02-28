@@ -3,3 +3,4 @@ class DirectionEnum(object):
 	Down = "down"
 	Left = "left"
 	Right = "right"
+	Unknown = "unknown"

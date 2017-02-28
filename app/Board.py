@@ -125,31 +125,20 @@ class Board():
 		return abs(tile1[X] - tile2[X]) + abs(tile1[Y] - tile2[Y])
 
 	def extendPath(self, currentTile, nextTile, visited, newPath, index):
-		# print("before " + str(newPath))
-		# print(index)
 		visited.append(currentTile)
 		visited.append(nextTile)
-		# print("Current in visited? " + str(not (nextTile in visited)))
 		if (currentTile not in newPath and nextTile not in newPath):
 			newPath.insert(index + 1, currentTile)
 			newPath.insert(index + 2, nextTile)
-		# print("after " + str(newPath) + "\n")
 
 	def isExtensionValid(self, currentTile, nextTile, visited):
-		# print(str(currentTile) + " "+ str(nextTile))
 		if (self.isTileOutOfBounds(currentTile) or self.isTileOutOfBounds(nextTile)):
-			# print("OOB")
 			return False
-		# Make sure the shift is unoccupied
 		elif (self.getTile(currentTile).entity == GameBoardEntityEnum.Obstacle):
-			# print("OBS")
 			return False
 		elif (self.getTile(nextTile).entity == GameBoardEntityEnum.Obstacle):
-			# print("OBS")
 			return False
-		# Make sure we don't shift the same tile pair twice
 		elif (currentTile in visited and nextTile in visited):
-			# print("Vis")
 			return False
 		else:
 			return True
@@ -301,7 +290,7 @@ class Board():
 		else:
 			return False
 
-	#Given the list of what was visited, create list [h,p1,..,pn,g]
+	# Given the list of what was visited, create list [h,p1,..,pn,g]
 	def reconstructPath(self, start, goal, closedList):
 		pathFinished = False
 		currentTile = 0
@@ -319,7 +308,7 @@ class Board():
 		path.reverse()
 		return path
 
-	#Sort the tiles by current shortest path for a*
+	# Sort the tiles by current shortest path for a*
 	def sortTiles(self, openList, fCost):
 		orderedList = collections.OrderedDict(
 			sorted(openList.items(), key=lambda tile: fCost[tile[1].getPositionTuple()]))

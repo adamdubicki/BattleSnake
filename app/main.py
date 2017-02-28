@@ -2,7 +2,7 @@ import bottle
 import os
 from multiprocessing.pool import ThreadPool
 from Board import Board
-from GameBoardEntityEnum import GameBoardEntityEnum
+import BoardService as bs
 import time
 
 
@@ -94,8 +94,7 @@ def move():
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToTail[1])
 		else:
 			print("No path to tail, need to find most open space")
-			# THIS IS WHERE WE NEED TO WORRY
-			pass
+			move = bs.findMostOpenSpace(board)
 
 	print(board.toString())
 	print(time.time() - start)
