@@ -196,7 +196,7 @@ class Board():
 
 	# Path finding algorithm
 	def aStarSearch(self, start, goal):
-		startTime = time.time()
+		# startTime = time.time()
 		if (self.isTileOutOfBounds(start) or self.isTileOutOfBounds(goal)):
 			print("Failed to search because start or goal was out of bounds")
 			return []
@@ -225,7 +225,7 @@ class Board():
 		foundGoal = self.exploreTilesForShortestPath(openList, closedList, goal, fCost)
 		if (foundGoal):
 			path = self.reconstructPath(start, goal, closedList)
-			print("Time to find goal", time.time() - startTime)
+			# print("Time to find goal", time.time() - startTime)
 			return path
 		else:
 			return []
