@@ -51,13 +51,12 @@ def start():
 
 @bottle.post('/move')
 def move():
-	# startTime = time.time()
+	startTime = time.time()
 	data = bottle.request.json
 
 	global gameBoard
 	if(gameBoard == None):
 		gameBoard = BoardE(data['width'], data['height'])
-		print("created new board")
 	else:
 		gameBoard.insertData(data)
 
@@ -92,7 +91,7 @@ def move():
 		else:
 			# print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(gameBoard)
-	# print("total", time.time() - startTime)
+	print("total", time.time() - startTime)
 
 	return {
 		'move': move,
