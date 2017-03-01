@@ -54,12 +54,8 @@ def move():
 	directions = ['up', 'down', 'left', 'right']
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = board.pickGoal()
-	# # pool = ThreadPool(processes=2)
-	# pathToGoal = pool.apply_async(board.aStarSearch, (board.ourSnakeHead, goal))
-	# pathToTail = pool.apply_async(board.longerPath, (board.ourSnakeHead, board.ourSnakeTail))
-	# # pathToGoal = pathToGoal.get()
 	pathToGoal = board.aStarSearch(board.ourSnakeHead,goal)
-	# print("Time to find goal",time.time() - start)
+	print("Time to find goal",time.time() - start)
 	# 1. Compute the shortest path P1 from our snakes's head to the goal.
 	# If path to the goal exists, go to step 2, Otherwise, go to step 4.
 	goodPath = True
@@ -73,7 +69,7 @@ def move():
 			# print("Path to goal is safe: Moving to goal")
 			# # print(board.toPathString(pathToGoal))
 			# # print(pathToGoal[1])
-			# print("Time to find cyclical goal to path", time.time() - start)
+			print("Time to find cyclical goal to path", time.time() - start)
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToGoal[1])
 			# print(move)
 		else:
@@ -87,7 +83,7 @@ def move():
 		# 4. Compute the longest path P3 from snake S1 's head to its tail. If P3 exists,
 		# let D be the first direction in path P3. Otherwise, go to step 5.
 		pathToTail = board.longerPath(board.ourSnakeHead, board.ourSnakeTail)
-		# print("Time to find path to tail", time.time() - start)
+		print("Time to find path to tail", time.time() - start)
 		if (len(pathToTail) > 0):
 			# print("Path to tail exists, will stall")
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToTail[1])
@@ -95,7 +91,7 @@ def move():
 			# print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(board)
 
-	print(time.time() - start)
+	print("total",time.time() - start)
 	return {
 		'move': move,
 		'taunt': 'battlesnake-python!'
