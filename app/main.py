@@ -9,6 +9,7 @@ from BoardE import BoardE
 
 gameBoard = None
 
+
 @bottle.route('/static/<path:path>')
 def static(path):
 	return bottle.static_file(path, root='static/')
@@ -55,7 +56,7 @@ def move():
 	data = bottle.request.json
 
 	global gameBoard
-	if(gameBoard == None):
+	if (gameBoard == None):
 		gameBoard = BoardE(data['width'], data['height'])
 	else:
 		gameBoard.insertData(data)
@@ -70,27 +71,22 @@ def move():
 	else:
 		goodPath = False
 
-	if (len(pathToGoal) > 0):
+	if (pathToGoal != None):
 		virtualSnake = bs.projectSnakeBodyAlongPath(gameBoard, pathToGoal)
-		if (bs.isCyclical(gameBoard,virtualSnake)):
-			# print("Time to find cyclical goal to path", time.time() - startTime)
+		if (bs.isCyclical(gameBoard, virtualSnake)):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
 		else:
-			# print("Path to goal was not safe")
 			goodPath = False
 	else:
-		# print("No path to goal")
 		goodPath = False
 
 	if (not goodPath):
 		pathToTail = bs.longerPath(gameBoard, gameBoard.ourSnakeHead, gameBoard.ourSnakeTail)
-		# print("Time to find path to tail", time.time() - start)
-		if (len(pathToTail) > 0):
-			# print("Path to tail exists, will stall")
+		if (pathToTail != None):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
 		else:
-			# print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(gameBoard)
+
 	print("total", time.time() - startTime)
 
 	return {

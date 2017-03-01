@@ -205,7 +205,75 @@ def isCyclical(board, virtualSnake):
 		return False
 
 
+# Extend the path, if the extension is valid
+def extendPath(currentTile, nextTile, visited, newPath, index):
+	visited.append(currentTile)
+	visited.append(nextTile)
+	if (currentTile not in newPath and nextTile not in newPath):
+		newPath.insert(index + 1, currentTile)
+		newPath.insert(index + 2, nextTile)
+
+
+def isExtensionValid(board, currentTile, nextTile, visited):
+	if (board.isTileOutOfBounds(currentTile) or board.isTileOutOfBounds(nextTile)):
+		return False
+	elif (board.getTile(currentTile) == GameBoardEntityEnum.Obstacle):
+		return False
+	elif (board.getTile(nextTile) == GameBoardEntityEnum.Obstacle):
+		return False
+	elif (currentTile in visited and nextTile in visited):
+		return False
+	else:
+		return True
+
+
 # Heuristic longer path
 def longerPath(board, start, goal):
 	basePath = shortestPath(board, start, goal)
+	pathFinished = False
+	visited = list(basePath)
+
+	if (basePath != None):
+
+		if (len(basePath) > 10):
+			basePath = basePath[:10]
+
+		while (not pathFinished and len(basePath) < 20):
+			changesMade = False
+
+			for i in range(len(basePath) - 1):
+				currentTile = basePath[i]
+				nextTile = basePath[i + 1]
+				direction = getDirectionFromMove(currentTile, nextTile)
+
+				if (direction == DirectionEnum.Left or direction == DirectionEnum.Right):
+					currentUp = (currentTile[X], currentTile[Y] - 1)
+					nextUp = (nextTile[X], nextTile[Y] - 1)
+					if (isExtensionValid(board, currentUp, nextUp, visited)):
+						extendPath(currentUp, nextUp, visited, basePath, i)
+						changesMade = True
+					else:
+						currentDown = (currentTile[X], currentTile[Y] + 1)
+						nextDown = (nextTile[X], nextTile[Y] + 1)
+						if (isExtensionValid(board, currentDown, nextDown, visited)):
+							extendPath(currentDown, nextDown, visited, basePath, i)
+							changesMade = True
+				else:
+					currentLeft = (currentTile[X] - 1, currentTile[Y])
+					nextLeft = (nextTile[X] - 1, nextTile[Y])
+					if (isExtensionValid(board, currentLeft, nextLeft, visited)):
+						extendPath(currentLeft, nextLeft, visited, basePath, i)
+						changesMade = True
+					else:
+						currentRight = (currentTile[X], currentTile[Y] + 1)
+						nextRight = (nextTile[X], nextTile[Y] + 1)
+						if (isExtensionValid(board, currentRight, nextRight, visited)):
+							extendPath(currentRight, nextRight, visited, basePath, i)
+							changesMade = True
+			if (not changesMade):
+				pathFinished = True
+		return basePath
+	else:
+		return None
+
 	return basePath

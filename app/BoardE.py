@@ -8,8 +8,7 @@ Y = 1
 
 
 class BoardE():
-
-	#Constructor
+	# Constructor
 	def __init__(self, width, height):
 		self.width = width
 		self.height = height
@@ -25,14 +24,14 @@ class BoardE():
 		self.ourSnakeTail = []
 		self.insertedEntities = []
 
-	#Add data to board from json
+	# Add data to board from json
 	def insertData(self, data):
 
 		oldData = list(self.insertedEntities)
 		self.ourSnakeBody = []
 		self.ourSnakeHead = []
 		self.ourSnakeTail = []
-		self.snakeHeads= []
+		self.snakeHeads = []
 		self.foods = []
 		# print(oldData)
 		self.insertedEntities = []
@@ -40,7 +39,7 @@ class BoardE():
 
 		self.ourSnakeId = data['you']
 
-		#Add food
+		# Add food
 		for food in data['food']:
 			self.insertBoardEntity(food, GameBoardEntityEnum.Food)
 			self.foods.append(food)
@@ -101,6 +100,12 @@ class BoardE():
 		if (self.isXOutOfBounds(tile[X]) or self.isYOutOfBounds(tile[Y])):
 			return True
 		return False
+
+	# Get the value at (x,y)
+	def getTile(self, tile):
+		if (self.isTileOutOfBounds(tile)):
+			return None
+		return self.gameBoard[tile[X]][tile[Y]]
 
 	# Insert GameBoard entity at tile (x,y)
 	def insertBoardEntity(self, tile, entity):
