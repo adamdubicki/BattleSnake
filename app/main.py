@@ -51,6 +51,7 @@ def move():
 	start = time.time()
 	data = bottle.request.json
 	board = Board(data['width'], data['height'], data)
+	print("Time to fill board", time.time() - start)
 	directions = ['up', 'down', 'left', 'right']
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = board.pickGoal()
