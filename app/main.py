@@ -7,9 +7,6 @@ import time
 import gc
 from BoardE import BoardE
 
-gameBoard = None
-
-
 @bottle.route('/static/<path:path>')
 def static(path):
 	return bottle.static_file(path, root='static/')
@@ -54,8 +51,12 @@ def start():
 def move():
 	startTime = time.time()
 	data = bottle.request.json
+
 	global gameBoard
-	gameBoard.insertData(data)
+	if(gameBoard == None):
+		gameBoard = BoardE(data['width'], data['height'])
+	else:
+		gameBoard.insertData(data)
 
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = bs.pickFood(gameBoard)
