@@ -248,6 +248,7 @@ class Board():
 					openList[neighborTile.getPositionTuple()] = neighborTile
 					neighborTile.parent = currentTile
 			closedList.append(currentTile)
+		print(closedList)
 		if (not foundGoal):
 			print("Goal was not reachable.")
 			return False
