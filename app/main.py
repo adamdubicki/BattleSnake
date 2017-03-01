@@ -51,7 +51,7 @@ def start():
 
 @bottle.post('/move')
 def move():
-	startTime = time.time()
+	# startTime = time.time()
 	data = bottle.request.json
 
 	global gameBoard
@@ -73,25 +73,25 @@ def move():
 	if (len(pathToGoal) > 0):
 		virtualSnake = bs.projectSnakeBodyAlongPath(gameBoard, pathToGoal)
 		if (bs.isCyclical(gameBoard,virtualSnake)):
-			print("Time to find cyclical goal to path", time.time() - startTime)
+			# print("Time to find cyclical goal to path", time.time() - startTime)
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
 		else:
-			print("Path to goal was not safe")
+			# print("Path to goal was not safe")
 			goodPath = False
 	else:
-		print("No path to goal")
+		# print("No path to goal")
 		goodPath = False
 
 	if (not goodPath):
 		pathToTail = bs.longerPath(gameBoard, gameBoard.ourSnakeHead, gameBoard.ourSnakeTail)
-		print("Time to find path to tail", time.time() - start)
+		# print("Time to find path to tail", time.time() - start)
 		if (len(pathToTail) > 0):
-			print("Path to tail exists, will stall")
+			# print("Path to tail exists, will stall")
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
 		else:
-			print("No path to tail, need to find most open space")
+			# print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(gameBoard)
-	print("total", time.time() - startTime)
+	# print("total", time.time() - startTime)
 
 	return {
 		'move': move,
