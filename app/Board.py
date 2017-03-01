@@ -2,8 +2,6 @@ import collections
 from DirectionEnum import DirectionEnum
 from GameBoardEntityEnum import GameBoardEntityEnum
 from Tile import Tile
-from random import shuffle
-import time
 X = 0
 Y = 1
 
@@ -27,7 +25,7 @@ class Board():
 			self.insertBoardEntity(food, GameBoardEntityEnum.Food)
 			self.foods.append(food)
 
-		# Get our snake data, is used for processing of opponents snakes
+		# Get our snake data, is used for ptrocessing of opponents snakes
 		for snake in data['snakes']:
 			if snake['id'] == self.ourSnakeId:
 				self.ourSnakeLength = len(snake['coords'])

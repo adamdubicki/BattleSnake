@@ -4,6 +4,7 @@ from multiprocessing.pool import ThreadPool
 from Board import Board
 import BoardService as bs
 import time
+import gc
 
 
 @bottle.route('/static/<path:path>')
@@ -13,7 +14,7 @@ def static(path):
 
 @bottle.get('/')
 def index():
-	head_url = '%s://%s/static/snake.png' % (
+	head_url = '%s://%s/static/devito.png' % (
 		bottle.request.urlparts.scheme,
 		bottle.request.urlparts.netloc
 	)
@@ -36,13 +37,11 @@ def start():
 		bottle.request.urlparts.netloc
 	)
 
-	# TODO: Do things with data
-
 	return {
 		'color': '#F6FAFB',
-		'taunt': 'DEUS VULT',
+		'taunt': 'I EAT GARBAGE.',
 		'head_url': head_url,
-		'name': 'Crusader_Snek'
+		'name': 'Trash_Snek'
 	}
 
 
@@ -92,7 +91,7 @@ def move():
 		else:
 			# print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(board)
-
+	gc.collect()
 	print("total",time.time() - start)
 	return {
 		'move': move,
