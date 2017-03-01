@@ -57,6 +57,7 @@ def move():
 	global gameBoard
 	if(gameBoard == None):
 		gameBoard = BoardE(data['width'], data['height'])
+		print("created new board")
 	else:
 		gameBoard.insertData(data)
 
