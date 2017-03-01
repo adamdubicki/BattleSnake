@@ -42,7 +42,7 @@ def start():
 	)
 
 	return {
-		'color': '#F6FAFB',
+		'color': '#660000',
 		'taunt': 'I EAT GARBAGE.',
 		'head_url': head_url,
 		'name': 'Trash_Snek'
