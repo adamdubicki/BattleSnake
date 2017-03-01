@@ -7,6 +7,8 @@ import time
 import gc
 from BoardE import BoardE
 
+gameBoard = None
+
 @bottle.route('/static/<path:path>')
 def static(path):
 	return bottle.static_file(path, root='static/')
