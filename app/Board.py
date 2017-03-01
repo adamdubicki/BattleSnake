@@ -3,6 +3,7 @@ from DirectionEnum import DirectionEnum
 from GameBoardEntityEnum import GameBoardEntityEnum
 from Tile import Tile
 from random import shuffle
+import time
 X = 0
 Y = 1
 
@@ -67,7 +68,7 @@ class Board():
 					foodDistances[tuple(food)] = (distance, (snakeHead[X], snakeHead[Y]))
 		goalChoice = None
 		for food in foodDistances:
-			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0] and foodDistances[food][0]<20:
+			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0]:
 				goalChoice = food
 		if (goalChoice != None):
 			return goalChoice
@@ -195,6 +196,7 @@ class Board():
 
 	# Path finding algorithm
 	def aStarSearch(self, start, goal):
+		startTime = time.time()
 		if (self.isTileOutOfBounds(start) or self.isTileOutOfBounds(goal)):
 			print("Failed to search because start or goal was out of bounds")
 			return []
@@ -223,6 +225,7 @@ class Board():
 		foundGoal = self.exploreTilesForShortestPath(openList, closedList, goal, fCost)
 		if (foundGoal):
 			path = self.reconstructPath(start, goal, closedList)
+			print("Time to find goal", time.time() - startTime)
 			return path
 		else:
 			return []
@@ -248,7 +251,6 @@ class Board():
 					openList[neighborTile.getPositionTuple()] = neighborTile
 					neighborTile.parent = currentTile
 			closedList.append(currentTile)
-		print(closedList)
 		if (not foundGoal):
 			print("Goal was not reachable.")
 			return False

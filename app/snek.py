@@ -8,9 +8,9 @@ def main():
 	# da = np.genfromtxt('README.md', delimiter = ',')
 
 	# TEST 1
-	board = Board(3, 4, {
+	board = Board(20, 20, {
 		"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
-		"width": 3,
+		"width": 20,
 		"turn": 0,
 		"snakes": [
 			{
@@ -34,12 +34,12 @@ def main():
 				]
 			}
 		],
-		"height": 4,
+		"height": 20,
 		"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
 		"food": [
 			[
-				2,
-				2
+				19,
+				19
 			]
 
 		],
