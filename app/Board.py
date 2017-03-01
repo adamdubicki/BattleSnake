@@ -326,7 +326,6 @@ class Board():
 				invalidNeighbors.append(tile)
 		for invalidNeighbor in invalidNeighbors:
 			inBoundNeighbors.remove(invalidNeighbor)
-		shuffle(inBoundNeighbors)
 		return inBoundNeighbors
 
 	# Return a list of tile neightbors which are not out of bounds
