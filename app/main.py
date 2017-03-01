@@ -71,6 +71,7 @@ def move():
 			# # print(board.toPathString(pathToGoal))
 			# # print(pathToGoal[1])
 			print("Time to find cyclical goal to path", time.time() - start)
+			print(board.toPathString(pathToGoal))
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToGoal[1])
 			# print(move)
 		else:
