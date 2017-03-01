@@ -69,7 +69,7 @@ class Board():
 			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0]:
 				goalChoice = food
 		if (goalChoice != None):
-			return goalChoice
+			return None
 		else:
 			return goal[1]
 

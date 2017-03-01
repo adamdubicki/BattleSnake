@@ -2,13 +2,16 @@ from GameBoardEntityEnum import GameBoardEntityEnum
 from Board import Board
 from Tile import Tile
 import numpy as np
+from BoardE import BoardE
+import time
+import BoardService as bs
 
 
 def main():
-	# da = np.genfromtxt('README.md', delimiter = ',')
-
-	# TEST 1
-	board = Board(20, 20, {
+	start = time.time()
+	board = BoardE(20, 20)
+	# for i in range(1000):
+	board.insertData({
 		"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
 		"width": 20,
 		"turn": 0,
@@ -66,14 +69,133 @@ def main():
 			}
 		]
 	})
-	print("-asdasd")
-	path = board.aStarSearch((1, 0), (2, 2))
-	print(board.toString())
-	# path = [(8, 0), (9, 0), (9, 1), (9, 2)]
-	print(path)
-	virtualSnake = board.projectSnakeBodyAlongPath(path)
-	print(virtualSnake)
-	board.isCyclical(virtualSnake)
+	board.insertData({
+		"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+		"width": 20,
+		"turn": 0,
+		"snakes": [
+			{
+				"taunt": "git gud",
+				"name": "my-snake",
+				"id": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+				"health_points": 93,
+				"coords": [
+					[
+						1,
+						0
+					],
+					[
+						1,
+						1
+					]
+				]
+			}
+		],
+		"height": 20,
+		"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
+		"food": [
+			[
+				19,
+				19
+			]
+
+		],
+		"dead_snakes": [
+			{
+				"taunt": "gotta go fast",
+				"name": "other-snake",
+				"id": "c4e48602-197e-40b2-80af-8f89ba005ee9",
+				"health_points": 50,
+				"coords": [
+					[
+						5,
+						0
+					],
+					[
+						5,
+						0
+					],
+					[
+						5,
+						0
+					]
+				]
+			}
+		]
+	})
+	bs.shortestPath(board, board.ourSnakeHead, (19, 19))
+	# print (board.toString())
+	print("Time to create board", float((time.time() - start) / 1000))
+
+	# da = np.genfromtxt('README.md', delimiter = ',')
+
+	# TEST 1
+	# board = Board(20, 20, {
+	# 	"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+	# 	"width": 20,
+	# 	"turn": 0,
+	# 	"snakes": [
+	# 		{
+	# 			"taunt": "git gud",
+	# 			"name": "my-snake",
+	# 			"id": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+	# 			"health_points": 93,
+	# 			"coords": [
+	# 				[
+	# 					1,
+	# 					0
+	# 				],
+	# 				[
+	# 					1,
+	# 					1
+	# 				],
+	# 				[
+	# 					1,
+	# 					2
+	# 				]
+	# 			]
+	# 		}
+	# 	],
+	# 	"height": 20,
+	# 	"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
+	# 	"food": [
+	# 		[
+	# 			19,
+	# 			19
+	# 		]
+	#
+	# 	],
+	# 	"dead_snakes": [
+	# 		{
+	# 			"taunt": "gotta go fast",
+	# 			"name": "other-snake",
+	# 			"id": "c4e48602-197e-40b2-80af-8f89ba005ee9",
+	# 			"health_points": 50,
+	# 			"coords": [
+	# 				[
+	# 					5,
+	# 					0
+	# 				],
+	# 				[
+	# 					5,
+	# 					0
+	# 				],
+	# 				[
+	# 					5,
+	# 					0
+	# 				]
+	# 			]
+	# 		}
+	# 	]
+	# })
+	# print("-asdasd")
+	# path = board.aStarSearch((1, 0), (2, 2))
+	# print(board.toString())
+	# # path = [(8, 0), (9, 0), (9, 1), (9, 2)]
+	# print(path)
+	# virtualSnake = board.projectSnakeBodyAlongPath(path)
+	# print(virtualSnake)
+	# board.isCyclical(virtualSnake)
 	# print(board.toCostString())
 	# print(board.showPathString(path))
 
@@ -128,6 +250,9 @@ def main():
 	# # print(board.toString())
 	# # print(board.toCostString())
 	# print(board.showPathString(path))
+
+
+
 
 	return 1
 
