@@ -13,7 +13,7 @@ def static(path):
 
 @bottle.get('/')
 def index():
-	head_url = '%s://%s/static/head.png' % (
+	head_url = '%s://%s/static/snake.png' % (
 		bottle.request.urlparts.scheme,
 		bottle.request.urlparts.netloc
 	)
@@ -39,10 +39,10 @@ def start():
 	# TODO: Do things with data
 
 	return {
-		'color': '#00FF00',
-		'taunt': '{} ({}x{})'.format(game_id, board_width, board_height),
+		'color': '#F6FAFB',
+		'taunt': 'DEUS VULT',
 		'head_url': head_url,
-		'name': 'battlesnake-python'
+		'name': 'Crusader_Snek'
 	}
 
 
@@ -55,11 +55,11 @@ def move():
 	directions = ['up', 'down', 'left', 'right']
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = board.pickGoal()
-	pool = ThreadPool(processes=2)
-	pathToGoal = pool.apply_async(board.aStarSearch, (board.ourSnakeHead, goal))
-	pathToTail = pool.apply_async(board.longerPath, (board.ourSnakeHead, board.ourSnakeTail))
-	pathToGoal = pathToGoal.get()
-
+	# # pool = ThreadPool(processes=2)
+	# pathToGoal = pool.apply_async(board.aStarSearch, (board.ourSnakeHead, goal))
+	# pathToTail = pool.apply_async(board.longerPath, (board.ourSnakeHead, board.ourSnakeTail))
+	# # pathToGoal = pathToGoal.get()
+	pathToGoal = board.aStarSearch(board.ourSnakeHead,goal)
 	# 1. Compute the shortest path P1 from our snakes's head to the goal.
 	# If path to the goal exists, go to step 2, Otherwise, go to step 4.
 	goodPath = True
@@ -67,17 +67,14 @@ def move():
 		print("Found path to goal: "+str(goal))
 		# 2. Move a virtual snake to eat the food along path P1.
 		virtualSnake = board.projectSnakeBodyAlongPath(pathToGoal)
-
-		# We need the async call to end,
-		# the virtual snake modifies board data
-		pathToTail.wait()
-
 		# 3. Compute the longest path P2 from virtual snakes's head to its tail.
 		# If P2 exists, let D be the first direction in path P1. Otherwise, go to step 4
 		if (board.isCyclical(virtualSnake)):
 			print("Path to goal is safe: Moving to goal")
-			print(pathToGoal)
-			move = board.getDirectionFromMove(board.ourSnakeHead,pathToGoal[1])
+			# print(board.toPathString(pathToGoal))
+			# print(pathToGoal[1])
+			move = board.getDirectionFromMove(board.ourSnakeHead, pathToGoal[1])
+			# print(move)
 		else:
 			print("Path to goal was not safe")
 			goodPath = False
@@ -88,7 +85,7 @@ def move():
 	if (not goodPath):
 		# 4. Compute the longest path P3 from snake S1 's head to its tail. If P3 exists,
 		# let D be the first direction in path P3. Otherwise, go to step 5.
-		pathToTail = pathToTail.get()
+		pathToTail = board.longerPath(board.ourSnakeHead, board.ourSnakeTail)
 		if (len(pathToTail) > 0):
 			print("Path to tail exists, will stall")
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToTail[1])
@@ -96,7 +93,6 @@ def move():
 			print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(board)
 
-	print(board.toString())
 	print(time.time() - start)
 	return {
 		'move': move,
