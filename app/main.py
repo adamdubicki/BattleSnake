@@ -49,7 +49,6 @@ def start():
 @bottle.post('/move')
 def move():
 	start = time.time()
-
 	data = bottle.request.json
 	board = Board(data['width'], data['height'], data)
 	directions = ['up', 'down', 'left', 'right']
@@ -60,40 +59,40 @@ def move():
 	# pathToTail = pool.apply_async(board.longerPath, (board.ourSnakeHead, board.ourSnakeTail))
 	# # pathToGoal = pathToGoal.get()
 	pathToGoal = board.aStarSearch(board.ourSnakeHead,goal)
-	print("Time to find goal",time.time() - start)
+	# print("Time to find goal",time.time() - start)
 	# 1. Compute the shortest path P1 from our snakes's head to the goal.
 	# If path to the goal exists, go to step 2, Otherwise, go to step 4.
 	goodPath = True
 	if (len(pathToGoal) > 0):
-		print("Found path to goal: "+str(goal))
+		# print("Found path to goal: "+str(goal))
 		# 2. Move a virtual snake to eat the food along path P1.
 		virtualSnake = board.projectSnakeBodyAlongPath(pathToGoal)
 		# 3. Compute the longest path P2 from virtual snakes's head to its tail.
 		# If P2 exists, let D be the first direction in path P1. Otherwise, go to step 4
 		if (board.isCyclical(virtualSnake)):
-			print("Path to goal is safe: Moving to goal")
-			# print(board.toPathString(pathToGoal))
-			# print(pathToGoal[1])
-			print("Time to find cyclical goal to path", time.time() - start)
+			# print("Path to goal is safe: Moving to goal")
+			# # print(board.toPathString(pathToGoal))
+			# # print(pathToGoal[1])
+			# print("Time to find cyclical goal to path", time.time() - start)
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToGoal[1])
 			# print(move)
 		else:
-			print("Path to goal was not safe")
+			# print("Path to goal was not safe")
 			goodPath = False
 	else:
-		print("No path to goal")
+		# print("No path to goal")
 		goodPath = False
 
 	if (not goodPath):
 		# 4. Compute the longest path P3 from snake S1 's head to its tail. If P3 exists,
 		# let D be the first direction in path P3. Otherwise, go to step 5.
 		pathToTail = board.longerPath(board.ourSnakeHead, board.ourSnakeTail)
-		print("Time to find path to tail", time.time() - start)
+		# print("Time to find path to tail", time.time() - start)
 		if (len(pathToTail) > 0):
-			print("Path to tail exists, will stall")
+			# print("Path to tail exists, will stall")
 			move = board.getDirectionFromMove(board.ourSnakeHead, pathToTail[1])
 		else:
-			print("No path to tail, need to find most open space")
+			# print("No path to tail, need to find most open space")
 			move = bs.findMostOpenSpace(board)
 
 	print(time.time() - start)
