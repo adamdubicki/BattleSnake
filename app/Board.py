@@ -2,7 +2,7 @@ import collections
 from DirectionEnum import DirectionEnum
 from GameBoardEntityEnum import GameBoardEntityEnum
 from Tile import Tile
-
+from random import shuffle
 X = 0
 Y = 1
 
@@ -149,7 +149,11 @@ class Board():
 		pathFinished = False
 		visited = list(basePath)
 		if (len(basePath) > 0):
-			while (not pathFinished):
+
+			if(len(basePath)>30):
+				basePath = basePath[:30]
+
+			while (not pathFinished and len(basePath)<50):
 				changesMade = False
 				for i in range(len(basePath) - 1):
 					currentTile = basePath[i]
@@ -277,7 +281,7 @@ class Board():
 			self.insertBoardEntity(projection, GameBoardEntityEnum.Obstacle)
 		self.insertBoardEntity(virtualSnake[-1], GameBoardEntityEnum.SnakeTail)
 		self.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.SnakeHead)
-		cycle = self.longerPath(virtualSnake[0], virtualSnake[-1])
+		cycle = self.aStarSearch(virtualSnake[0], virtualSnake[-1])
 		for projection in virtualSnake:
 			self.insertBoardEntity(projection, GameBoardEntityEnum.Empty)
 		for snake in originalSnake:
@@ -322,6 +326,7 @@ class Board():
 				invalidNeighbors.append(tile)
 		for invalidNeighbor in invalidNeighbors:
 			inBoundNeighbors.remove(invalidNeighbor)
+		shuffle(inBoundNeighbors)
 		return inBoundNeighbors
 
 	# Return a list of tile neightbors which are not out of bounds
