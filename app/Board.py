@@ -67,7 +67,7 @@ class Board():
 					foodDistances[tuple(food)] = (distance, (snakeHead[X], snakeHead[Y]))
 		goalChoice = None
 		for food in foodDistances:
-			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0]:
+			if foodDistances[food][1] == self.ourSnakeHead and foodDistances[food][0] <= goal[0] and foodDistances[0]<20:
 				goalChoice = food
 		if (goalChoice != None):
 			return goalChoice
