@@ -3,6 +3,7 @@ import os
 from BoardDepreacted import Board
 import BoardService as bs
 from Board import Board
+import time
 from GameBoardEntityEnum import GameBoardEntityEnum
 
 gameBoard = None
@@ -51,6 +52,7 @@ def start():
 @bottle.post('/move')
 def move():
 	data = bottle.request.json
+	startTime = time.time()
 	global gameBoard
 	if (gameBoard == None):
 		gameBoard = Board(data['width'], data['height'])
@@ -93,7 +95,7 @@ def move():
 			print("Searching for most open space")
 			move = bs.findMostOpenSpace(gameBoard)
 			gameBoard.ateFoodThisTurn = False
-	# print(gameBoard.toString())
+	print("Endtime",startTime - time.time())
 	return {
 		'move': move,
 		'taunt': 'battlesnake-python!'
