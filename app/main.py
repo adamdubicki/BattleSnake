@@ -93,7 +93,7 @@ def move():
 			print("Searching for most open space")
 			move = bs.findMostOpenSpace(gameBoard)
 			gameBoard.ateFoodThisTurn = False
-	print(gameBoard.toString())
+	# print(gameBoard.toString())
 	return {
 		'move': move,
 		'taunt': 'battlesnake-python!'
