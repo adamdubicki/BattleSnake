@@ -1,11 +1,9 @@
 import bottle
 import os
-from multiprocessing.pool import ThreadPool
-from Board import Board
+from BoardDepreacted import Board
 import BoardService as bs
-import time
-import gc
-from BoardE import BoardE
+from Board import Board
+from GameBoardEntityEnum import GameBoardEntityEnum
 
 gameBoard = None
 
@@ -35,7 +33,7 @@ def start():
 	board_width = data['width']
 	board_height = data['height']
 	global gameBoard
-	gameBoard = BoardE(board_width, board_height)
+	gameBoard = Board(board_width, board_height)
 
 	head_url = '%s://%s/static/devito.png' % (
 		bottle.request.urlparts.scheme,
@@ -52,19 +50,18 @@ def start():
 
 @bottle.post('/move')
 def move():
-	startTime = time.time()
 	data = bottle.request.json
-
 	global gameBoard
 	if (gameBoard == None):
-		gameBoard = BoardE(data['width'], data['height'])
+		gameBoard = Board(data['width'], data['height'])
+		print("Made new board")
 	else:
 		gameBoard.insertData(data)
 
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = bs.pickFood(gameBoard)
 	goodPath = True
-	pathToGoal = []
+	pathToGoal = None
 
 	if (goal != None):
 		pathToGoal = bs.shortestPath(gameBoard, gameBoard.ourSnakeHead, goal)
@@ -72,10 +69,12 @@ def move():
 		goodPath = False
 
 	if (pathToGoal != None):
+		print("Found path to goal")
 		virtualSnake = bs.projectSnakeBodyAlongPath(gameBoard, pathToGoal)
 		if (bs.isCyclical(gameBoard, virtualSnake)):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
 		else:
+			print("path was not safe")
 			goodPath = False
 	else:
 		goodPath = False
@@ -85,10 +84,9 @@ def move():
 		if (pathToTail != None):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
 		else:
+			print("Searching for most open space")
 			move = bs.findMostOpenSpace(gameBoard)
-
-	print("total", time.time() - startTime)
-
+	print(gameBoard.toString())
 	return {
 		'move': move,
 		'taunt': 'battlesnake-python!'

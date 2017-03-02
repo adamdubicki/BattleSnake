@@ -69,22 +69,21 @@ def findMostOpenSpace(board):
 		return DirectionEnum.Unknown
 	mostOpen = [0, DirectionEnum.Unknown, 0]
 	for move in validMoves:
-		direction = board.getDirectionFromMove(board.ourSnakeHead, move)
+		direction = getDirectionFromMove(board.ourSnakeHead, move)
 		reachableTiles = getAllReachableTiles(board, move)
 		directionHeuristic = getDirectionHeuristic(move, reachableTiles, direction)
 		if (len(reachableTiles) > mostOpen[0]):
 			mostOpen = [len(reachableTiles), direction, directionHeuristic]
 		elif (len(reachableTiles) == mostOpen[0]):
-			if (directionHeuristic > direction[2]):
+			if (directionHeuristic > mostOpen[2]):
 				mostOpen = [len(reachableTiles), direction, directionHeuristic]
 			else:
 				pass
 		else:
 			pass
-		return mostOpen[1]
+	return mostOpen[1]
 
 
-# -----------------------------------------------------------------------
 def pickFood(board):
 	goal = (9999, (-1, -1))
 	foodDistances = collections.OrderedDict()
@@ -94,14 +93,15 @@ def pickFood(board):
 			distance = board.getDistanceBetweenSpaces(food, snakeHead)
 			if distance < foodDistances[tuple(food)][0]:
 				foodDistances[tuple(food)] = (distance, (snakeHead[X], snakeHead[Y]))
-	goalChoice = None
+	goalChoices = []
 	for food in foodDistances:
-		if foodDistances[food][1] == board.ourSnakeHead and foodDistances[food][0] <= goal[0]:
-			goalChoice = food
-	if (goalChoice != None):
-		return goalChoice
+		print(food, foodDistances[food])
+		if foodDistances[food][1] == board.ourSnakeHead:
+			goalChoices.append(food)
+	if (len(goalChoices) > 0):
+		return min(goalChoices, key=lambda p: foodDistances[p][0])
 	else:
-		return goal[1]
+		return None
 
 
 # Rebuild the path retracing our steps
@@ -182,11 +182,16 @@ def isCyclical(board, virtualSnake):
 	originalHead = board.ourSnakeHead
 	originalTail = board.ourSnakeTail
 
+	# If we eat the food, then our tail will extend
+	# if our tail is the only escape after eating a food, then we cannot cycle
+	goalNeighbors = board.getValidTileNeighbors(virtualSnake[0])
+	if(len(goalNeighbors) == 1 and originalTail in goalNeighbors):
+		return False
+
 	for snake in originalSnake:
 		board.insertBoardEntity(snake, GameBoardEntityEnum.Empty)
 	for projection in virtualSnake:
 		board.insertBoardEntity(projection, GameBoardEntityEnum.Obstacle)
-
 	board.insertBoardEntity(virtualSnake[-1], GameBoardEntityEnum.SnakeTail)
 	board.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.SnakeHead)
 	cycle = shortestPath(board, virtualSnake[0], virtualSnake[-1])
@@ -230,10 +235,14 @@ def isExtensionValid(board, currentTile, nextTile, visited):
 # Heuristic longer path
 def longerPath(board, start, goal):
 	basePath = shortestPath(board, start, goal)
+
+	if (board.ourHealth <= basePath):
+		return basePath
+
 	pathFinished = False
-	visited = list(basePath)
 
 	if (basePath != None):
+		visited = list(basePath)
 
 		if (len(basePath) > 10):
 			basePath = basePath[:10]
@@ -275,5 +284,3 @@ def longerPath(board, start, goal):
 		return basePath
 	else:
 		return None
-
-	return basePath
