@@ -66,7 +66,7 @@ def move():
 	pathToGoal = None
 
 	# If we eat food, then our tail is not safe for adjacent moves
-	if(not gameBoard.isTailSafe()):
+	if(not gameBoard.isTailSafe() or data['turn']<3):
 		gameBoard.insertBoardEntity(gameBoard.ourSnakeTail, GameBoardEntityEnum.Obstacle)
 
 	if (goal != None):
