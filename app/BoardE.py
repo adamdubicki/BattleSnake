@@ -57,6 +57,9 @@ class BoardE():
 				for segment in range(1, len(snake['coords']) - 1):
 					self.ourSnakeBody.append(tuple(snake['coords'][segment]))
 				self.ourSnakeBody.append(tuple(self.ourSnakeTail))
+				if (snake['health'] == 100):
+					self.numFoodEaten += 1
+					print('ate a food')
 		# print(self.insertedEntities)
 
 		for snake in data['snakes']:
