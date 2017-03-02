@@ -63,6 +63,9 @@ def move():
 	goodPath = True
 	pathToGoal = None
 
+	if(gameBoard.ateFoodThisTurn):
+		gameBoard.insertBoardEntity(gameBoard.ourSnakeTail,GameBoardEntityEnum.Obstacle)
+
 	if (goal != None):
 		pathToGoal = bs.shortestPath(gameBoard, gameBoard.ourSnakeHead, goal)
 	else:
@@ -73,6 +76,7 @@ def move():
 		virtualSnake = bs.projectSnakeBodyAlongPath(gameBoard, pathToGoal)
 		if (bs.isCyclical(gameBoard, virtualSnake)):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
+			gameBoard.ateFoodThisTurn = True
 		else:
 			print("path was not safe")
 			goodPath = False
@@ -83,9 +87,11 @@ def move():
 		pathToTail = bs.longerPath(gameBoard, gameBoard.ourSnakeHead, gameBoard.ourSnakeTail)
 		if (pathToTail != None):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
+			gameBoard.ateFoodThisTurn = False
 		else:
 			print("Searching for most open space")
 			move = bs.findMostOpenSpace(gameBoard)
+			gameBoard.ateFoodThisTurn = False
 	print(gameBoard.toString())
 	return {
 		'move': move,
