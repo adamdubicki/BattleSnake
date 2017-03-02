@@ -95,7 +95,7 @@ def pickFood(board):
 				foodDistances[tuple(food)] = (distance, (snakeHead[X], snakeHead[Y]))
 	goalChoices = []
 	for food in foodDistances:
-		print(food, foodDistances[food])
+		# print(food, foodDistances[food])
 		if foodDistances[food][1] == board.ourSnakeHead:
 			goalChoices.append(food)
 	if (len(goalChoices) > 0):
@@ -113,16 +113,21 @@ def reconstructPath(cameFrom, current):
 	return list(reversed(totalPath))
 
 
+def getDangerHeurestic(board, tile):
+	validNeighbors = board.getValidTileNeighbors(tile)
+	return (4 - len(validNeighbors)) * 0.01
+
+
 # A* Search. Returns the shortest path from S to G, else None
 def shortestPath(board, start, goal):
 	closedSet = []
 	openSet = [start]
 	cameFrom = {}
 
-	gScore = [[10000 for x in xrange(board.width)] for y in xrange(board.height)]
+	gScore = [[100000 for x in xrange(board.width)] for y in xrange(board.height)]
 	gScore[start[X]][start[Y]] = 0
 
-	fScore = [[10000 for x in xrange(board.width)] for y in xrange(board.height)]
+	fScore = [[100000 for x in xrange(board.width)] for y in xrange(board.height)]
 	fScore[start[X]][start[Y]] = board.getDistanceBetweenSpaces(start, goal)
 
 	while (len(openSet) > 0):
@@ -135,7 +140,8 @@ def shortestPath(board, start, goal):
 		for neighbour in neighbours:
 			if neighbour in closedSet:
 				continue
-			tentativeGScore = gScore[current[X]][current[Y]] + board.getDistanceBetweenSpaces(current, neighbour)
+			tentativeGScore = gScore[current[X]][current[Y]] + board.getDistanceBetweenSpaces(current,
+				neighbour) - getDangerHeurestic(board, current)
 			if neighbour not in openSet:
 				openSet.append(neighbour)
 			elif tentativeGScore >= gScore[neighbour[X]][neighbour[Y]]:
@@ -185,7 +191,7 @@ def isCyclical(board, virtualSnake):
 	# If we eat the food, then our tail will extend
 	# if our tail is the only escape after eating a food, then we cannot cycle
 	goalNeighbors = board.getValidTileNeighbors(virtualSnake[0])
-	if(len(goalNeighbors) == 1 and originalTail in goalNeighbors):
+	if (len(goalNeighbors) == 1 and originalTail in goalNeighbors):
 		return False
 
 	for snake in originalSnake:
