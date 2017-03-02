@@ -151,6 +151,12 @@ class Board():
 			return 0
 		return abs(tile1[X] - tile2[X]) + abs(tile1[Y] - tile2[Y])
 
+	def isTailSafe(self):
+		if (self.ateFoodThisTurn and self.getDistanceBetweenSpaces(self.ourSnakeHead, self.ourSnakeTail) <= 1):
+			return False
+		else:
+			return True
+
 	# Return the board as a string, for pretty printing
 	def toString(self):
 		rowDividerString = " --- " * self.width + "\n"

@@ -202,7 +202,11 @@ def isCyclical(board, virtualSnake):
 		board.insertBoardEntity(snake, GameBoardEntityEnum.Obstacle)
 
 	board.insertBoardEntity(originalHead, GameBoardEntityEnum.SnakeHead)
-	board.insertBoardEntity(originalTail, GameBoardEntityEnum.SnakeTail)
+	if (not board.isTailSafe()):
+		board.insertBoardEntity(originalTail, GameBoardEntityEnum.Obstacle)
+	else:
+		board.insertBoardEntity(originalTail, GameBoardEntityEnum.SnakeTail)
+
 	board.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.Food)
 	if (cycle != None):
 		return True

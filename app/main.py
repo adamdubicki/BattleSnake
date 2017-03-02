@@ -64,8 +64,8 @@ def move():
 	pathToGoal = None
 
 	# If we eat food, then our tail is not safe for adjacent moves
-	if(gameBoard.ateFoodThisTurn and gameBoard.getDistanceBetweenSpaces(gameBoard.ourSnakeHead,gameBoard.ourSnakeTail)<=1):
-		gameBoard.insertBoardEntity(gameBoard.ourSnakeTail,GameBoardEntityEnum.Obstacle)
+	if(not gameBoard.isTailSafe()):
+		gameBoard.insertBoardEntity(gameBoard.ourSnakeTail, GameBoardEntityEnum.Obstacle)
 
 	if (goal != None):
 		pathToGoal = bs.shortestPath(gameBoard, gameBoard.ourSnakeHead, goal)
