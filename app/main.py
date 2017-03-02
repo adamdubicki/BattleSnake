@@ -88,7 +88,7 @@ def move():
 
 	if (not goodPath):
 		pathToTail = bs.longerPath(gameBoard, gameBoard.ourSnakeHead, gameBoard.ourSnakeTail)
-		if (pathToTail != None):
+		if (pathToTail != None and len(pathToTail)>1):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
 			gameBoard.ateFoodThisTurn = False
 		else:
