@@ -29,7 +29,6 @@ class Board():
 
 	# Add data to board from json
 	def insertData(self, data):
-
 		oldData = list(self.insertedEntities)
 		self.ourSnakeBody = []
 		self.ourSnakeHead = []
@@ -69,7 +68,7 @@ class Board():
 				self.snakeHeads.append(tuple(snake['coords'][0]))
 				for segment in range(0, len(snake['coords'])):
 					self.insertBoardEntity(snake['coords'][segment], GameBoardEntityEnum.Obstacle)
-					self.insertedEntities.append(tuple(segment))
+					self.insertedEntities.append(tuple(snake['coords'][segment]))
 
 		for segment in self.ourSnakeBody:
 			self.insertBoardEntity(segment, GameBoardEntityEnum.Obstacle)
