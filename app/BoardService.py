@@ -199,7 +199,7 @@ def isCyclical(board, virtualSnake):
 	board.insertBoardEntity(originalHead, GameBoardEntityEnum.SnakeHead)
 	board.insertBoardEntity(originalTail, GameBoardEntityEnum.SnakeTail)
 	board.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.Food)
-	if (len(cycle) > 0):
+	if (cycle != None):
 		return True
 	else:
 		return False
