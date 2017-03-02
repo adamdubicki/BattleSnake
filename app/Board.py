@@ -2,6 +2,7 @@ import collections
 from DirectionEnum import DirectionEnum
 from GameBoardEntityEnum import GameBoardEntityEnum
 from Tile import Tile
+
 X = 0
 Y = 1
 
@@ -19,6 +20,7 @@ class Board():
 		self.ourSnakeId = data['you']
 		self.ourSnakeBody = []
 		self.ourSnakeHead = []
+		self.numFoodEaten = 2
 
 		# Add food
 		for food in data['food']:
@@ -37,6 +39,9 @@ class Board():
 				for segment in range(1, len(snake['coords']) - 1):
 					self.ourSnakeBody.append(tuple(snake['coords'][segment]))
 				self.ourSnakeBody.append(tuple(self.ourSnakeTail))
+				if (snake['health'] == 100):
+					self.numFoodEaten += 1
+					print('ate a food')
 
 		# Process Opponents snake
 		for snake in data['snakes']:
@@ -149,10 +154,10 @@ class Board():
 		visited = list(basePath)
 		if (len(basePath) > 0):
 
-			if(len(basePath)>30):
+			if (len(basePath) > 30):
 				basePath = basePath[:30]
 
-			while (not pathFinished and len(basePath)<50):
+			while (not pathFinished and len(basePath) < 50):
 				changesMade = False
 				for i in range(len(basePath) - 1):
 					currentTile = basePath[i]
