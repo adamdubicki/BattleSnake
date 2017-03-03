@@ -46,6 +46,7 @@ def start():
 		'taunt': 'I EAT GARBAGE.',
 		'head_url': head_url,
 		'head_type': 'sand-worm',
+		'tail_type': 'freckled',
 		'name': 'Trash_Snek'
 	}
 
