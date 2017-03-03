@@ -2,14 +2,68 @@ from GameBoardEntityEnum import GameBoardEntityEnum
 from BoardDepreacted import Board
 from Tile import Tile
 import numpy as np
-from Board import BoardE
+from Board import Board
 import time
 import BoardService as bs
 
 
 def main():
 	start = time.time()
-	board = BoardE(20, 20)
+
+	board = Board(4, 4)
+	board.insertData({
+		"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+		"width": 4,
+		"turn": 0,
+		"snakes": [
+			{
+				"taunt": "git gud",
+				"name": "my-snake",
+				"id": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+				"health_points": 93,
+				"coords": [
+					[
+						0,
+						1
+					]
+				]
+			}
+		],
+		"height": 4,
+		"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
+		"food": [
+			[
+				3,
+				3
+			]
+
+		],
+		"dead_snakes": [
+			{
+				"taunt": "gotta go fast",
+				"name": "other-snake",
+				"id": "c4e48602-197e-40b2-80af-8f89ba005ee9",
+				"health_points": 50,
+				"coords": [
+					[
+						5,
+						0
+					],
+					[
+						5,
+						0
+					],
+					[
+						5,
+						0
+					]
+				]
+			}
+		]
+	})
+	path = bs.shortestPath(board, (0, 1), (3, 3))
+
+	# board = Board(20, 20)
 	# for i in range(1000):
 	# board.insertData({
 	# 	"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
@@ -69,66 +123,66 @@ def main():
 	# 		}
 	# 	]
 	# })
-	board.insertData({
-		"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
-		"width": 20,
-		"turn": 0,
-		"snakes": [
-			{
-				"taunt": "git gud",
-				"name": "my-snake",
-				"id": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
-				"health_points": 93,
-				"coords": [
-					[
-						1,
-						0
-					],
-					[
-						1,
-						1
-					]
-				]
-			}
-		],
-		"height": 20,
-		"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
-		"food": [
-			[
-				19,
-				19
-			]
-
-		],
-		"dead_snakes": [
-			{
-				"taunt": "gotta go fast",
-				"name": "other-snake",
-				"id": "c4e48602-197e-40b2-80af-8f89ba005ee9",
-				"health_points": 50,
-				"coords": [
-					[
-						5,
-						0
-					],
-					[
-						5,
-						0
-					],
-					[
-						5,
-						0
-					]
-				]
-			}
-		]
-	})
-	print("Time to create board", float((time.time() - start)))
-	bs.shortestPath(board, board.ourSnakeHead, (19, 19))
-	print("Time to create board", float((time.time() - start)))
-	bs.longerPath(board, board.ourSnakeHead, (19, 19))
-	# print (board.toString())
-	print("Time to create board", float((time.time() - start)))
+	# board.insertData({
+	# 	"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+	# 	"width": 20,
+	# 	"turn": 0,
+	# 	"snakes": [
+	# 		{
+	# 			"taunt": "git gud",
+	# 			"name": "my-snake",
+	# 			"id": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
+	# 			"health_points": 93,
+	# 			"coords": [
+	# 				[
+	# 					1,
+	# 					0
+	# 				],
+	# 				[
+	# 					1,
+	# 					1
+	# 				]
+	# 			]
+	# 		}
+	# 	],
+	# 	"height": 20,
+	# 	"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
+	# 	"food": [
+	# 		[
+	# 			19,
+	# 			19
+	# 		]
+	#
+	# 	],
+	# 	"dead_snakes": [
+	# 		{
+	# 			"taunt": "gotta go fast",
+	# 			"name": "other-snake",
+	# 			"id": "c4e48602-197e-40b2-80af-8f89ba005ee9",
+	# 			"health_points": 50,
+	# 			"coords": [
+	# 				[
+	# 					5,
+	# 					0
+	# 				],
+	# 				[
+	# 					5,
+	# 					0
+	# 				],
+	# 				[
+	# 					5,
+	# 					0
+	# 				]
+	# 			]
+	# 		}
+	# 	]
+	# })
+	# print("Time to create board", float((time.time() - start)))
+	# bs.shortestPath(board, board.ourSnakeHead, (19, 19))
+	# print("Time to create board", float((time.time() - start)))
+	# bs.longerPath(board, board.ourSnakeHead, (19, 19))
+	# # print (board.toString())
+	# print("Time to create board", float((time.time() - start)))
 
 	# da = np.genfromtxt('README.md', delimiter = ',')
 

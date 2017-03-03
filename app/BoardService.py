@@ -140,15 +140,15 @@ def shortestPath(board, start, goal):
 		for neighbour in neighbours:
 			if neighbour in closedSet:
 				continue
-			tentativeGScore = gScore[current[X]][current[Y]] + board.getDistanceBetweenSpaces(current,
-				neighbour) - getDangerHeurestic(board, current)
+			tentativeGScore = gScore[current[X]][current[Y]] + board.getDistanceBetweenSpaces(current, neighbour)
 			if neighbour not in openSet:
 				openSet.append(neighbour)
 			elif tentativeGScore >= gScore[neighbour[X]][neighbour[Y]]:
 				continue
 			cameFrom[neighbour] = current
 			gScore[neighbour[X]][neighbour[Y]] = tentativeGScore
-			fScore[neighbour[X]][neighbour[Y]] = tentativeGScore + board.getDistanceBetweenSpaces(neighbour, goal)
+			fScore[neighbour[X]][neighbour[Y]] = tentativeGScore + board.getDistanceBetweenSpaces(neighbour,
+				 goal) - getDangerHeurestic(board, current)
 	return None
 
 
@@ -254,10 +254,10 @@ def longerPath(board, start, goal):
 	if (basePath != None):
 		visited = list(basePath)
 
-		if (len(basePath) > 10):
-			basePath = basePath[:10]
+		# if (len(basePath) > 10):
+		# 	basePath = basePath[:10]
 
-		while (not pathFinished and len(basePath) < 20):
+		while (not pathFinished):
 			changesMade = False
 
 			for i in range(len(basePath) - 1):
