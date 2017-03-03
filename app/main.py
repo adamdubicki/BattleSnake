@@ -45,6 +45,7 @@ def start():
 		'color': '#660000',
 		'taunt': 'I EAT GARBAGE.',
 		'head_url': head_url,
+		'head_type': 'sand-worm',
 		'name': 'Trash_Snek'
 	}
 
