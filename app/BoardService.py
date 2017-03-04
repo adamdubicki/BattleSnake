@@ -190,7 +190,7 @@ def depthFirstSearch(board, tile):
 	visited = []
 	toVisit = [tile]
 
-	while(len(toVisit)>0):
+	while(len(toVisit)>0 and len(visited)<50):
 		currentTile = toVisit.pop(0)
 		neighbors = board.getValidTileNeighbors(currentTile)
 		ommit = [GameBoardEntityEnum.SnakeHead, GameBoardEntityEnum.SnakeTail]
