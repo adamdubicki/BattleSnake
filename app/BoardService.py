@@ -178,7 +178,7 @@ def projectSnakeBodyAlongPath(board, path):
 	if (len(path) > len(board.ourSnakeBody)):
 		return pathCoords[:len(board.ourSnakeBody)]
 	elif (len(board.ourSnakeBody) > len(path)):
-		return pathCoords[:-1] + board.ourSnakeBody[:-(len(path) - 1)]
+			return pathCoords[:-1] + board.ourSnakeBody[:-(len(path) - 1)]
 	else:
 		return pathCoords
 
