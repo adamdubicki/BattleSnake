@@ -187,9 +187,19 @@ def projectSnakeBodyAlongPath(board, path):
 		return pathCoords
 
 def depthFirstSearch(board, tile):
-	visited = [tile]
-	toVisit = [board.getValidTileNeighbors(tile)]
+	visited = []
+	toVisit = [tile]
 
+	while(len(toVisit)>0):
+		currentTile = toVisit.pop(0)
+		neighbors = board.getValidTileNeighbors(currentTile)
+		for neighbor in neighbors:
+			if(neighbor not in visited and neighbor not in toVisit):
+				toVisit.append(neighbor)
+			else:
+				pass
+		visited.append(currentTile)
+	return visited
 
 
 	return visited

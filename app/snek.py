@@ -60,7 +60,8 @@ def main():
 			}
 		]
 	})
-	path = bs.shortestPath(board, (0, 1), (3, 3))
+	print (board.toString())
+	print(len(bs.depthFirstSearch(board,(3,3))))
 
 	# board = Board(20, 20)
 	# for i in range(1000):
