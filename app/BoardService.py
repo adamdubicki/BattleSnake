@@ -184,9 +184,15 @@ def projectSnakeBodyAlongPath(board, path):
 		else:
 			return pathCoords[:-1] + board.ourSnakeBody[:-((len(path))-1)]
 	else:
-
 		return pathCoords
 
+def depthFirstSearch(board, tile):
+	visited = [tile]
+	toVisit = [board.getValidTileNeighbors(tile)]
+
+
+
+	return visited
 
 # Determine if a path is cyclical, that is...
 # If I move to the goal, will I be trapped?
