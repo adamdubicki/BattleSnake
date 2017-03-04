@@ -5,6 +5,7 @@ from Board import Board
 import time
 import BoardService as bs
 
+#just testing
 
 def main():
 	start = time.time()
