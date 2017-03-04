@@ -102,7 +102,7 @@ def move():
 	print("Endtime",startTime - time.time())
 	return {
 		'move': move,
-		'taunt': 'battlesnake-python!'
+		'taunt': 'I EAT GARBAGE'
 	}
 
 
