@@ -19,7 +19,7 @@ def isArticulationPoint(reachableTiles, tile):
 def getAllReachableTiles(board, start):
 	closedList = [board.ourSnakeHead]
 	openList = [start]
-	while (len(openList) != 0):
+	while (len(openList) != 0 and len(closedList)<5):
 		currentTile = openList.pop()
 		neighbors = board.getValidTileNeighbors(currentTile)
 		for neighbor in neighbors:
@@ -202,9 +202,6 @@ def depthFirstSearch(board, tile):
 		visited.append(currentTile)
 	return visited
 
-
-	return visited
-
 # Determine if a path is cyclical, that is...
 # If I move to the goal, will I be trapped?
 def isCyclical(board, virtualSnake):
@@ -284,7 +281,11 @@ def longerPath(board, start, goal):
 	if (basePath != None):
 		visited = list(basePath)
 
-		while (not pathFinished):
+
+		if(len(basePath) > 30):
+			basePath = basePath[:30]
+
+		while (not pathFinished and len(basePath)<40):
 			changesMade = False
 
 			for i in range(len(basePath) - 1):

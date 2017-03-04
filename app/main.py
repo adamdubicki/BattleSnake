@@ -56,11 +56,13 @@ def move():
 	data = bottle.request.json
 	startTime = time.time()
 	global gameBoard
+
 	if (gameBoard == None):
 		gameBoard = Board(data['width'], data['height'])
 		print("Made new board")
 	else:
 		gameBoard.insertData(data)
+	print("Time to create board", startTime - time.time())
 
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = bs.pickFood(gameBoard)
@@ -98,7 +100,9 @@ def move():
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
 		else:
 			print("Searching for most open space")
+			startTime = time.time()
 			move = bs.findMostOpenSpace(gameBoard)
+			print("Time to find most open", startTime - time.time())
 
 	# print(gameBoard.toString())
 	# print("Ate Food this turn?",gameBoard.ateFoodThisTurn)
