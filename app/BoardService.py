@@ -115,7 +115,8 @@ def reconstructPath(cameFrom, current):
 
 def getDangerHeurestic(board, tile):
 	validNeighbors = board.getValidTileNeighbors(tile)
-	return (4 - len(validNeighbors)) * 0.01
+	inboundNeighbors = board.getInBoundNeighbors(tile)
+	return ((4 - len(inboundNeighbors)) * -0.02) + (((4 - len(validNeighbors) * 0.01)))
 
 
 # A* Search. Returns the shortest path from S to G, else None
@@ -148,7 +149,8 @@ def shortestPath(board, start, goal):
 			cameFrom[neighbour] = current
 			gScore[neighbour[X]][neighbour[Y]] = tentativeGScore
 			fScore[neighbour[X]][neighbour[Y]] = tentativeGScore + board.getDistanceBetweenSpaces(neighbour,
-				 goal) - getDangerHeurestic(board, current)
+																								  goal) - getDangerHeurestic(
+				board, current)
 	return None
 
 

@@ -156,6 +156,18 @@ class Board():
 		else:
 			return True
 
+	def toPathString(self, path):
+		rowDividerString = " --- " * self.width + "\n"
+		boardString = rowDividerString
+		for j in range(self.height):
+			for i in range(self.width):
+				if ((i, j) in path):
+					boardString += "| X |"
+				else:
+					boardString += "| " + self.gameBoard[i][j] + " |"
+			boardString += "\n" + rowDividerString
+		return boardString
+
 	# Return the board as a string, for pretty printing
 	def toString(self):
 		rowDividerString = " --- " * self.width + "\n"

@@ -82,6 +82,7 @@ def move():
 		if (bs.isCyclical(gameBoard, virtualSnake)):
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
 			gameBoard.ateFoodThisTurn = True
+			# print(gameBoard.toPathString(pathToGoal))
 		else:
 			print("path was not safe")
 			goodPath = False
@@ -97,6 +98,7 @@ def move():
 			print("Searching for most open space")
 			move = bs.findMostOpenSpace(gameBoard)
 			gameBoard.ateFoodThisTurn = False
+	print(gameBoard.toString())
 	print("Endtime",startTime - time.time())
 	return {
 		'move': move,
