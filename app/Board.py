@@ -131,7 +131,7 @@ class Board():
 		inBoundNeighbors = self.getInBoundNeighbors(tile)
 		invalidNeighbors = []
 		for tile in inBoundNeighbors:
-			if (self.getEntity(tile) == GameBoardEntityEnum.Obstacle):
+			if (self.getEntity(tile) == GameBoardEntityEnum.Obstacle or self.getEntity(tile) == GameBoardEntityEnum.SnakeHead):
 				invalidNeighbors.append(tile)
 		for invalidNeighbor in invalidNeighbors:
 			inBoundNeighbors.remove(invalidNeighbor)

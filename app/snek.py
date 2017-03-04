@@ -2,18 +2,37 @@ from GameBoardEntityEnum import GameBoardEntityEnum
 from BoardDepreacted import Board
 from Tile import Tile
 from Board import Board
+import BoardService
 import time
 import BoardService as bs
 
 #just testing
+def findBestOpenAreaBackToTail(board):
+	#projectSnakeBodyAlongPath
+	#getValidTileNeighborsgetValidTileNeighbors(
+	pathOptions = {}
+	possibleMoves = Board.getValidTileNeighbors(board, board.ourSnakeHead)
+	tail = board.getTile(board.ourSnakeBody[-1])
+	tailMinusOne = board.getTile(board.ourSnakeBody[-2])
+	board.insertBoardEntity(board.ourSnakeBody[-1], GameBoardEntityEnum.Empty)
+	board.insertBoardEntity(board.ourSnakeBody[-2], GameBoardEntityEnum.SnakeTail)
+
+	for move in possibleMoves:
+		tempShort = bs.shortestPath(board, move, board.ourSnakeBody[-2])
+		if tempShort is not None:
+			pathOptions[move] = tempShort
+	board.insertBoardEntity(board.ourSnakeBody[-1], tail)
+	board.insertBoardEntity(board.ourSnakeBody[-2], tailMinusOne)
+
+	return pathOptions
 
 def main():
 	start = time.time()
 
-	board = Board(4, 4)
+	board = Board(6, 6)
 	board.insertData({
 		"you": "25229082-f0d7-4315-8c52-6b0ff23fb1fb",
-		"width": 4,
+		"width": 6,
 		"turn": 0,
 		"snakes": [
 			{
@@ -23,18 +42,38 @@ def main():
 				"health_points": 93,
 				"coords": [
 					[
+						1,
+						0
+					],
+					[
+						1,
+						1
+					],
+					[
 						0,
 						1
+					],
+					[
+						0,
+						2
+					],
+					[
+						1,
+						2
+					],
+					[
+						2,
+						2
 					]
 				]
 			}
 		],
-		"height": 4,
+		"height": 6,
 		"game_id": "870d6d79-93bf-4941-8d9e-944bee131167",
 		"food": [
 			[
-				3,
-				3
+				0,
+				4
 			]
 
 		],
@@ -63,6 +102,8 @@ def main():
 	})
 	print (board.toString())
 	print(len(bs.depthFirstSearch(board,(3,3))))
+
+	print findBestOpenAreaBackToTail(board)
 
 	# board = Board(20, 20)
 	# for i in range(1000):
