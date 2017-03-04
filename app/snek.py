@@ -1,7 +1,6 @@
 from GameBoardEntityEnum import GameBoardEntityEnum
 from BoardDepreacted import Board
 from Tile import Tile
-import numpy as np
 from Board import Board
 import time
 import BoardService as bs
