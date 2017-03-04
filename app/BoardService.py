@@ -193,8 +193,9 @@ def depthFirstSearch(board, tile):
 	while(len(toVisit)>0):
 		currentTile = toVisit.pop(0)
 		neighbors = board.getValidTileNeighbors(currentTile)
+		ommit = [GameBoardEntityEnum.SnakeHead, GameBoardEntityEnum.SnakeTail]
 		for neighbor in neighbors:
-			if(neighbor not in visited and neighbor not in toVisit):
+			if(neighbor not in visited and neighbor not in toVisit and board.getTile(neighbor) not in ommit):
 				toVisit.append(neighbor)
 			else:
 				pass
@@ -207,6 +208,11 @@ def depthFirstSearch(board, tile):
 # Determine if a path is cyclical, that is...
 # If I move to the goal, will I be trapped?
 def isCyclical(board, virtualSnake):
+
+	print(len(depthFirstSearch(board,virtualSnake[0])))
+	if(len(depthFirstSearch(board,virtualSnake[0])) >= len(board.ourSnakeBody)):
+		return True
+
 	originalSnake = board.ourSnakeBody
 	originalHead = board.ourSnakeHead
 	originalTail = board.ourSnakeTail
@@ -312,6 +318,7 @@ def longerPath(board, start, goal):
 							changesMade = True
 			if (not changesMade):
 				pathFinished = True
+
 		return basePath
 	else:
 		return None
