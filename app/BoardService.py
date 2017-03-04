@@ -177,9 +177,14 @@ def projectSnakeBodyAlongPath(board, path):
 
 	if (len(path) > len(board.ourSnakeBody)):
 		return pathCoords[:len(board.ourSnakeBody)]
+
 	elif (len(board.ourSnakeBody) > len(path)):
-			return pathCoords[:-1] + board.ourSnakeBody[:-(len(path) - 1)]
+		if(len(path)==2):
+			return pathCoords[:-1] + board.ourSnakeBody
+		else:
+			return pathCoords[:-1] + board.ourSnakeBody[:-((len(path))-1)]
 	else:
+
 		return pathCoords
 
 
@@ -202,6 +207,7 @@ def isCyclical(board, virtualSnake):
 		board.insertBoardEntity(projection, GameBoardEntityEnum.Obstacle)
 	board.insertBoardEntity(virtualSnake[-1], GameBoardEntityEnum.SnakeTail)
 	board.insertBoardEntity(virtualSnake[0], GameBoardEntityEnum.SnakeHead)
+	# print(board.toString())
 	cycle = shortestPath(board, virtualSnake[0], virtualSnake[-1])
 
 	for projection in virtualSnake:
@@ -255,9 +261,6 @@ def longerPath(board, start, goal):
 
 	if (basePath != None):
 		visited = list(basePath)
-
-		# if (len(basePath) > 10):
-		# 	basePath = basePath[:10]
 
 		while (not pathFinished):
 			changesMade = False

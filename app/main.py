@@ -67,8 +67,10 @@ def move():
 	goodPath = True
 	pathToGoal = None
 
+	print (gameBoard.toString())
+
 	# If we eat food, then our tail is not safe for adjacent moves
-	if(not gameBoard.isTailSafe() or data['turn']<3):
+	if(data['turn']<3):
 		gameBoard.insertBoardEntity(gameBoard.ourSnakeTail, GameBoardEntityEnum.Obstacle)
 
 	if (goal != None and gameBoard.ourHealth < 95):
@@ -79,10 +81,10 @@ def move():
 	if (pathToGoal != None):
 		print("Found path to goal")
 		virtualSnake = bs.projectSnakeBodyAlongPath(gameBoard, pathToGoal)
+		# print(str(virtualSnake))
 		if (bs.isCyclical(gameBoard, virtualSnake)):
+			print ("Path is cyclical")
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
-			gameBoard.ateFoodThisTurn = True
-			# print(gameBoard.toPathString(pathToGoal))
 		else:
 			print("path was not safe")
 			goodPath = False
@@ -92,13 +94,15 @@ def move():
 	if (not goodPath):
 		pathToTail = bs.longerPath(gameBoard, gameBoard.ourSnakeHead, gameBoard.ourSnakeTail)
 		if (pathToTail != None and len(pathToTail)>1):
+			print("Found path to tail")
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
-			gameBoard.ateFoodThisTurn = False
 		else:
 			print("Searching for most open space")
 			move = bs.findMostOpenSpace(gameBoard)
-			gameBoard.ateFoodThisTurn = False
-	print(gameBoard.toString())
+
+	# print(gameBoard.toString())
+	print("Ate Food this turn?",gameBoard.ateFoodThisTurn)
+	print("TailSafe",gameBoard.isTailSafe())
 	print("Endtime",startTime - time.time())
 	return {
 		'move': move,

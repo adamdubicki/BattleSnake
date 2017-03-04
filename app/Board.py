@@ -79,6 +79,12 @@ class Board():
 		for diff in list(set(oldData) - set(self.insertedEntities)):
 			self.insertBoardEntity(diff, GameBoardEntityEnum.Empty)
 
+		if(self.ourHealth == 100 and self.getDistanceBetweenSpaces(self.ourSnakeHead,self.ourSnakeTail)==1):
+			self.ateFoodThisTurn = True
+			self.insertBoardEntity(self.ourSnakeTail, GameBoardEntityEnum.Obstacle)
+		else:
+			self.ateFoodThisTurn = False
+
 	# Helper method
 	def isXOutOfBounds(self, xPosition):
 		if (xPosition < 0 or xPosition > self.width - 1):
@@ -151,7 +157,7 @@ class Board():
 		return abs(tile1[X] - tile2[X]) + abs(tile1[Y] - tile2[Y])
 
 	def isTailSafe(self):
-		if (self.ateFoodThisTurn and self.getDistanceBetweenSpaces(self.ourSnakeHead, self.ourSnakeTail) <= 1):
+		if (self.ateFoodThisTurn and self.getDistanceBetweenSpaces(self.ourSnakeHead,self.ourSnakeTail)==1):
 			return False
 		else:
 			return True
