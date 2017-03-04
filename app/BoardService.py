@@ -322,3 +322,20 @@ def longerPath(board, start, goal):
 		return basePath
 	else:
 		return None
+
+def findBestOpenAreaBackToTail(board):
+	pathOptions = {}
+	possibleMoves = board.getValidTileNeighbors(board, board.ourSnakeHead)
+	tail = board.getTile(board.ourSnakeBody[-1])
+	tailMinusOne = board.getTile(board.ourSnakeBody[-2])
+	board.insertBoardEntity(board.ourSnakeBody[-1], GameBoardEntityEnum.Empty)
+	board.insertBoardEntity(board.ourSnakeBody[-2], GameBoardEntityEnum.SnakeTail)
+
+	for move in possibleMoves:
+		tempShort = shortestPath(board, move, board.ourSnakeBody[-2])
+		if tempShort is not None:
+			pathOptions[move] = tempShort
+	board.insertBoardEntity(board.ourSnakeBody[-1], tail)
+	board.insertBoardEntity(board.ourSnakeBody[-2], tailMinusOne)
+
+	return pathOptions
