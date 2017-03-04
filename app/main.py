@@ -71,7 +71,7 @@ def move():
 	if(not gameBoard.isTailSafe() or data['turn']<3):
 		gameBoard.insertBoardEntity(gameBoard.ourSnakeTail, GameBoardEntityEnum.Obstacle)
 
-	if (goal != None):
+	if (goal != None and gameBoard.ourHealth < 90):
 		pathToGoal = bs.shortestPath(gameBoard, gameBoard.ourSnakeHead, goal)
 	else:
 		goodPath = False
