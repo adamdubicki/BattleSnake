@@ -67,7 +67,7 @@ def move():
 	goodPath = True
 	pathToGoal = None
 
-	print (gameBoard.toString())
+	# print (gameBoard.toString())
 
 	# If we eat food, then our tail is not safe for adjacent moves
 	if(data['turn']<3):
