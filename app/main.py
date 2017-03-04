@@ -101,8 +101,8 @@ def move():
 			move = bs.findMostOpenSpace(gameBoard)
 
 	# print(gameBoard.toString())
-	print("Ate Food this turn?",gameBoard.ateFoodThisTurn)
-	print("TailSafe",gameBoard.isTailSafe())
+	# print("Ate Food this turn?",gameBoard.ateFoodThisTurn)
+	# print("TailSafe",gameBoard.isTailSafe())
 	print("Endtime",startTime - time.time())
 	return {
 		'move': move,
