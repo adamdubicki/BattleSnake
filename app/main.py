@@ -63,7 +63,7 @@ def move():
 	else:
 		gameBoard.insertData(data)
 	# print("Time to create board", startTime - time.time())
-
+	print(gameBoard.toString())
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = bs.pickFood(gameBoard)
 	goodPath = True
