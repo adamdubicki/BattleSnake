@@ -104,10 +104,10 @@ def move():
 	# print(gameBoard.toString())
 	# print("Ate Food this turn?",gameBoard.ateFoodThisTurn)
 	# print("TailSafe",gameBoard.isTailSafe())
-	print("Endtime",startTime - time.time())
+	# print("Endtime",startTime - time.time())
 	return {
 		'move': move,
-		'taunt': 'I EAT GARBAGE'
+		'taunt': 'I EAT GARBAGE: ' + str(time.time() - startTime)
 	}
 
 
