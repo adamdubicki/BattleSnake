@@ -54,14 +54,11 @@ def start():
 @bottle.post('/move')
 def move():
 	data = bottle.request.json
+	board_width = data['width']
+	board_height = data['height']
 	startTime = time.time()
-	global gameBoard
-
-	if (gameBoard == None):
-		gameBoard = Board(data['width'], data['height'])
-		# print("Made new board")
-	else:
-		gameBoard.insertData(data)
+	gameBoard = Board(board_width, board_height)
+	gameBoard.insertData(data)
 	# print("Time to create board", startTime - time.time())
 	print(gameBoard.toString())
 	# To find snake S1's next moving direction D, the AI follows the steps below:
