@@ -59,10 +59,10 @@ def move():
 
 	if (gameBoard == None):
 		gameBoard = Board(data['width'], data['height'])
-		print("Made new board")
+		# print("Made new board")
 	else:
 		gameBoard.insertData(data)
-	print("Time to create board", startTime - time.time())
+	# print("Time to create board", startTime - time.time())
 
 	# To find snake S1's next moving direction D, the AI follows the steps below:
 	goal = bs.pickFood(gameBoard)
@@ -81,14 +81,14 @@ def move():
 		goodPath = False
 
 	if (pathToGoal != None):
-		print("Found path to goal")
+		# print("Found path to goal")
 		virtualSnake = bs.projectSnakeBodyAlongPath(gameBoard, pathToGoal)
 		# print(str(virtualSnake))
 		if (bs.isCyclical(gameBoard, virtualSnake)):
-			print ("Path is cyclical")
+			# print ("Path is cyclical")
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToGoal[1])
 		else:
-			print("path was not safe")
+			# print("path was not safe")
 			goodPath = False
 	else:
 		goodPath = False
@@ -96,18 +96,18 @@ def move():
 	if (not goodPath):
 		pathToTail = bs.longerPath(gameBoard, gameBoard.ourSnakeHead, gameBoard.ourSnakeTail)
 		if (pathToTail != None and len(pathToTail)>1):
-			print("Found path to tail")
+			# print("Found path to tail")
 			move = bs.getDirectionFromMove(gameBoard.ourSnakeHead, pathToTail[1])
 		else:
-			print("Searching for most open space")
+			# print("Searching for most open space")
 			startTime = time.time()
 			move = bs.findMostOpenSpace(gameBoard)
-			print("Time to find most open", startTime - time.time())
+			# print("Time to find most open", startTime - time.time())
 
 	# print(gameBoard.toString())
 	# print("Ate Food this turn?",gameBoard.ateFoodThisTurn)
 	# print("TailSafe",gameBoard.isTailSafe())
-	print("Endtime",startTime - time.time())
+	# print("Endtime",startTime - time.time())
 	return {
 		'move': move,
 		'taunt': 'I EAT GARBAGE'
